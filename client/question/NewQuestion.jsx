@@ -175,7 +175,7 @@ const NewQuestion = () => {
           <Typography variant="h5" className={classes.errorText}>
             {error}
           </Typography>
-          <Typography> SurveyID: {surveyId} {jwt.token}</Typography>
+          <Typography> {currentSurvey.name}</Typography>
           <TextField id="name" label="What is the question?" className={classes.textField} />
           <div>
             <p>What type of question would you like to create?</p>

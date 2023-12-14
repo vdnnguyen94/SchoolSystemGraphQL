@@ -170,9 +170,9 @@ const useStyles = makeStyles((theme) => ({
             <DialogContentText>New survey successfully created.</DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Link to="/">
+            <Link to="/surveys">
               <Button color="primary" autoFocus variant="contained" onClick={handleClose}>
-                Back to Main Page
+                Navigate to My Surveys
               </Button>
             </Link>
           </DialogActions>
