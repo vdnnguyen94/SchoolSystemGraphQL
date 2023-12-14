@@ -53,7 +53,6 @@ const MySurveys = () => {
     <div>
       <Card className={classes.card}>
         <CardContent>
-          <Typography> Owner: {jwt.user._id} {jwt.token}</Typography>
           {surveys.map((survey) => (
             <Card key={survey._id} className={classes.surveyCard}>
               <Link to={`/survey/${survey._id}`} style={{ textDecoration: 'none' }}>
