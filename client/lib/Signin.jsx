@@ -118,7 +118,7 @@ console.log(user)
           <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>LOG IN</Button>
           
         </CardActions>
-        <a href="/resetpassword" className={classes.resetButton}>
+        <a href="/passwordreset" className={classes.resetButton}>
           <Button color="primary" variant="contained">
             Reset Password
           </Button>

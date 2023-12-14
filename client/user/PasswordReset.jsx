@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResetPassword() {
+export default function PasswordReset() {
   const classes = useStyles();
 
   const [values, setValues] = useState({ 

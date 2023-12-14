@@ -41,7 +41,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './core/Home' 
 import Users from './user/Users.jsx'
 import Signup from './user/Signup.jsx'
-import ResetPassword from './user/ResetPassword.jsx'
+import PasswordReset from './user/PasswordReset.jsx'
 import Signin from './lib/Signin.jsx'
 import Profile from './user/Profile.jsx'
 import Switch from 'react'
@@ -73,7 +73,7 @@ function MainRouter() {
   <Route path="/users" element={<Users />} />
   <Route path="/signup" element={<Signup />} />
   <Route path="/signin" element={<Signin />} />
-  <Route path="/resetpassword" element={<ResetPassword />} />
+  <Route path="/passwordreset" element={<PasswordReset />} />
   <Route path="/user/edit/:userId" element={<PrivateRoute><EditProfile /> </PrivateRoute>}/>
   <Route path="/user/:userId" element={<Profile />} />
 
