@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object List</title>
+</head>
+<body>
+  <h1>Object List</h1>
+  <ul>
+    <% objects.forEach(object => { %>
+      <li><%= object.name %>: <%= object.description %></li>
+      <!-- Add more fields as needed -->
+    <% }); %>
+  </ul>
+</body>
+</html>
