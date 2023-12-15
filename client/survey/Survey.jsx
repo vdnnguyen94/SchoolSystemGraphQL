@@ -234,6 +234,7 @@ const MySurveys = () => {
                     color="primary"
                     className={classes.button}
                     component={Link}
+                    style={{ width: '180px' }}
                     to={`/survey/${surveyId}/createquestion`}
                   >
                     Create Question
@@ -243,6 +244,7 @@ const MySurveys = () => {
                     color="primary"
                     className={classes.button}
                     component={Link}
+                    style={{ width: '180px' }}
                     to={`/survey/${surveyId}/edit`}
                   >
                     Edit Survey
@@ -252,7 +254,9 @@ const MySurveys = () => {
                     color="primary"
                     className={classes.button}
                     component={Link}
+                    style={{ width: '180px' }}
                     to={`/survey/${surveyId}/result`}
+          
                   >
                     Result
                   </Button>
@@ -315,6 +319,7 @@ const MySurveys = () => {
                     <Button
                     variant="contained"
                     color="primary"
+                    style={{ margin: '20px',fontSize: '1.2rem', fontWeight: 'bold', width: '200px' }}
                     className={classes.button}
                     onClick={handleSubmit}
                   >

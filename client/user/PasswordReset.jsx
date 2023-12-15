@@ -100,7 +100,7 @@ export default function PasswordReset() {
     });
   };
 
-  ResetPassword.propTypes = {
+  PasswordReset.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
   };

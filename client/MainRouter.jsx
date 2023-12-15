@@ -73,7 +73,7 @@ function MainRouter() {
   <Route path="/users" element={<Users />} />
   <Route path="/signup" element={<Signup />} />
   <Route path="/signin" element={<Signin />} />
-  <Route path="/passwordreset" element={<PasswordReset />} />
+  <Route path="/user/passwordreset" element={<PasswordReset />} />
   <Route path="/user/edit/:userId" element={<PrivateRoute><EditProfile /> </PrivateRoute>}/>
   <Route path="/user/:userId" element={<Profile />} />
 

@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography'
 import Icon from '@material-ui/core/Icon'
 import { makeStyles } from '@material-ui/core/styles'
 import auth from './auth-helper.js'
-import {Navigate} from 'react-router-dom'
+import {Navigate, Link} from 'react-router-dom'
 import { useLocation } from 'react-router-dom';
 import {signin} from './api-auth.js'
 
@@ -89,11 +89,7 @@ console.log(user)
         pathname: '/'
       }
   }
-  const {redirectToReferrer} = values
-  const resetPassword = () => {
-    // Redirect the user to the reset password page
-    props.history.push('/resetpassword');
-  };
+  const {redirectToReferrer} = values;
   if (redirectToReferrer) {
     return <Navigate to={from}/>;
       
@@ -118,11 +114,12 @@ console.log(user)
           <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>LOG IN</Button>
           
         </CardActions>
-        <a href="/passwordreset" className={classes.resetButton}>
+        <Link to={"/user/passwordreset"}>
           <Button color="primary" variant="contained">
             Reset Password
           </Button>
-        </a>
+        </Link>
+        
       </Card>
     )
 }

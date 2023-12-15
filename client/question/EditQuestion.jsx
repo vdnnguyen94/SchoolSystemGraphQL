@@ -237,7 +237,7 @@ const EditQuestion = () => {
                     color="primary"
                     className={classes.button}
                     onClick={handleUpdateName}
-                    style={{ width: '200px' }}
+                    style={{ width: '200px', margin: '5px' }}
                   >
                     Update Name
                   </Button>
@@ -246,7 +246,7 @@ const EditQuestion = () => {
                     color="primary"
                     className={classes.button}
                     onClick={handleUpdateMCQuestion}
-                    style={{ width: '200px' }}
+                    style={{ width: '200px',margin: '5px' }}
                   >
                     Update Answers
                   </Button>
@@ -255,7 +255,7 @@ const EditQuestion = () => {
                     color="secondary"
                     className={classes.button}
                     onClick={handleRemoveQuestion}
-                    style={{ width: '200px' }}
+                    style={{ width: '200px',margin: '5px' }}
                   >
                     Remove Question
                   </Button>
@@ -276,7 +276,7 @@ const EditQuestion = () => {
                     color="primary"
                     className={classes.button}
                     onClick={handleUpdateName}
-                    style={{ width: '200px' }}
+                    style={{ width: '200px',margin: '5px' }}
                   >
                     Update Name
                   </Button>
@@ -285,7 +285,7 @@ const EditQuestion = () => {
                     color="secondary"
                     className={classes.button}
                     onClick={handleRemoveQuestion}
-                    style={{ width: '200px' }}
+                    style={{ width: '200px',margin: '5px' }}
                   >
                     Remove Question
                   </Button>
