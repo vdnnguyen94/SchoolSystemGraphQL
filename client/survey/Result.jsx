@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import auth from '../lib/auth-helper';
 import { listSurveyQuestions} from '../question/api-question';
 import { surveyByID } from './api-survey';
-import { checkCompletedSurvey, updateSurveyResult } from '../surveysubmit/api-submit';
+import { checkCompletedSurvey, updateSurveyResult,downloadSurveyResult } from '../surveysubmit/api-submit';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -66,7 +66,9 @@ const MySurveys = () => {
   const [questions, setQuestions] = useState([]);
   const [error, setError] = useState(null);
 
-
+  const handleDownloadResult = () => {
+    downloadSurveyResult({ surveyId: surveyId }, { t: jwt.token });
+  };
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -188,6 +190,16 @@ const MySurveys = () => {
                 Owner: {currentSurvey.owner.firstName} {currentSurvey.owner.lastName} [
                 {currentSurvey.owner.username}]
               </Typography>
+              <div className={classes.buttonContainer}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={handleDownloadResult}
+                >
+                  Download Result
+                </Button></div>
+
               <div className={classes.questionsContainer}>
                 <Typography variant="h5" className={classes.title}>
                   Survey Questions

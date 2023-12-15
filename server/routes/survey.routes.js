@@ -23,7 +23,8 @@ router.route('/api/surveys/:surveyId/submit')
   .post(authCtrl.requireSignin, submitCtrl.notCompleteSurvey,submitCtrl.updateSurveyResults);
 router.route('/api/surveys/:surveyId/check')
   .get(authCtrl.requireSignin, submitCtrl.completedSurvey);  
-
+router.route('/api/surveys/:surveyId/downloadresult')
+  .get(authCtrl.requireSignin, surveyCtrl.isOwner, submitCtrl.downloadSurveyResult);
 router.param('surveyId', surveyCtrl.surveyByID);
 router.param('userId', userCtrl.userByID);
 export default router;

@@ -100,4 +100,30 @@ const completedSurvey = async (req, res) => {
     });
   }
 };
-export default {updateSurveyResults,notCompleteSurvey, completedSurvey};
+
+const downloadSurveyResult = async (req, res) => {
+  try {
+    const survey = req.survey;
+    const surveyQuestions = await Question.find({ survey: survey._id });
+
+    // Create an object containing survey and surveyQuestions
+    const surveyData = {
+      survey,
+      surveyQuestions,
+    };
+
+    // Set the content type to JSON
+    res.setHeader('Content-Type', 'application/json');
+
+    // Set the content disposition to attachment to trigger download
+    res.setHeader('Content-Disposition', 'attachment; filename=survey_result.json');
+
+    // Send the JSON response with the survey data
+    res.json(surveyData);
+  } catch (err) {
+    return res.status(400).json({
+      error: "Issue from obtaining the file",
+    });
+  }
+};;
+export default {updateSurveyResults,notCompleteSurvey, completedSurvey, downloadSurveyResult};

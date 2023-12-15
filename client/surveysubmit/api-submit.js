@@ -35,5 +35,32 @@ try {
   } catch (err) {
     console.log(err);
     }
-};   
-export { checkCompletedSurvey, updateSurveyResult };
+}; 
+
+const downloadSurveyResult = async (params, credentials) => {
+  try {
+      let response = await fetch(`/api/surveys/${params.surveyId}/downloadresult`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ' + credentials.t
+        }
+      });
+  
+      const blob = await response.blob();
+
+      // Create a download link
+      const downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = 'survey_results.json';
+  
+      // Trigger a click on the link to start the download
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+  
+    } catch (err) {
+      console.log(err);
+    }
+  };
+export { checkCompletedSurvey, updateSurveyResult,downloadSurveyResult };

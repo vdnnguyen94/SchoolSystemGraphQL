@@ -9,7 +9,7 @@ import { listSurveyQuestions} from '../question/api-question';
 import { surveyByID,activateSurvey,inactivateSurvey,removeSurvey,updateSurvey } from './api-survey';
 const useStyles = makeStyles((theme) => ({
   card: {
-    width: '40%',
+    width: '60%',
     margin: '0 auto',
     marginTop: theme.spacing(3),
     padding: theme.spacing(2),

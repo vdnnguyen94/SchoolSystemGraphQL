@@ -11,7 +11,7 @@ import { checkCompletedSurvey, updateSurveyResult } from '../surveysubmit/api-su
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    width: '40%',
+    width: '60%',
     margin: '0 auto',
     marginTop: theme.spacing(3),
     padding: theme.spacing(2),
