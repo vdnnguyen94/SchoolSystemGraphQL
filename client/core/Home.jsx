@@ -1,92 +1,88 @@
-/*import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
-import Typography from '@material-ui/core/Typography'
-import unicornbikeImg from './../assets/images/unicornbike.jpg'
-
-const useStyles = makeStyles(theme => ({ 
-card: {
-maxWidth: 600, 
-margin: 'auto',
-marginTop: theme.spacing(5) 
-},
-title: {
-padding:`${theme.spacing(3)}px ${theme.spacing(2.5)}px 
-${theme.spacing(2)}px`,
-color: theme.palette.openTitle 
-},
-media: { 
-minHeight: 400
-} 
-}))*/
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import unicornbikeImg from './../assets/images/unicornbikeImg.jpg';
+import toonieLogo from './../assets/images/toonieLogo.png';
 import { Link } from 'react-router-dom';
-   
+import Button from '@material-ui/core/Button';
+import auth from '../lib/auth-helper';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   card: {
     maxWidth: 600,
     margin: 'auto',
     marginTop: theme.spacing(5),
   },
-  title: {
-    padding: theme.spacing(3, 2.5, 2),
-    color: theme.palette.openTitle,
-  },
   media: {
-    minHeight: 400,
+    width: '100%',
+    minHeight: 250,
+    paddingTop: '56.25%',
+    objectFit: 'cover',
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: theme.spacing(2),
+  },
+  button: {
+    margin: theme.spacing(1),
   },
 }));
 
-export default function Home(){ 
-const classes = useStyles()
-return (
-<Card className={classes.card}>
-   
-  <Typography variant="h6" className={classes.title}>Home Page</Typography>
-
-
-<CardMedia className={classes.media}
-image={unicornbikeImg} title="Unicorn Bicycle"/>
-<CardContent>
-<Typography variant="body2" component="p"> 
-Welcome to the MERN Skeleton home page.
-</Typography> 
-</CardContent>
-</Card> 
-)
-}
-
-/*const MyComponent = () => {
+const Home = ({ isUserSignedOut }) => {
   const classes = useStyles();
+  const [isLoggedIn, setIsLoggedIn] = useState(auth.isAuthenticated());
+
+  useEffect(() => {
+    // Update the authentication status when isUserSignedOut changes
+    setIsLoggedIn(auth.isAuthenticated());
+  }, [isUserSignedOut]);
+
+  const handleSignOut = () => {
+    auth.clearJWT(() => {
+      // Update the authentication status after sign-out
+      setIsLoggedIn(false);
+    });
+  };
 
   return (
     <Card className={classes.card}>
+      <CardMedia
+        className={classes.media}
+        image={toonieLogo}
+        title="Toonie Solution Logo"
+        onError={(e) => {
+          console.error('Error loading image:', e);
+        }}
+      />
       <CardContent>
-        <Typography variant="h6" className={classes.title}>
-          Card Title
-        </Typography>
-        <CardMedia
-          className={classes.media}
-          image={unicornbikeImg}
-          title="Unicorn Bike"
-        />
-        <Typography variant="body2" component="p">
-          Card content goes here.
-        </Typography>
+        <div className={classes.buttonContainer}>
+          {isLoggedIn ? (
+            <Link to="/mysurveys" style={{ textDecoration: 'none' }}>
+              <Button variant="contained" color="primary" className={classes.button}>
+                MY SURVEY
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link to="/signup">
+                <Button variant="contained" color="primary" className={classes.button}>
+                  Sign Up
+                </Button>
+              </Link>
+              <Link to="/signin">
+                <Button variant="contained" color="primary" className={classes.button}>
+                  Sign In
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
 };
 
-export default MyComponent;*/
-
+export default Home;

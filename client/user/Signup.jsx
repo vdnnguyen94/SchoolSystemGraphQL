@@ -126,7 +126,7 @@ export default function Signup() {
                   
           <TextField
             id="firstName"
-            label="firstName"
+            label="First Name"
             className={classes.textField}
             value={values.firstName}
             onChange={handleChange('firstName')}
@@ -134,7 +134,7 @@ export default function Signup() {
           />
           <TextField
             id="lastName"
-            label="lastName"
+            label="Last Name"
             className={classes.textField}
             value={values.lastName}
             onChange={handleChange('lastName')}
@@ -142,7 +142,7 @@ export default function Signup() {
           />
           <TextField
             id="companyName"
-            label="companyName"
+            label="Company Name"
             className={classes.textField}
             value={values.companyName}
             onChange={handleChange('companyName')}
@@ -175,7 +175,7 @@ export default function Signup() {
           />
                     <TextField
             id="passwordConfirmation"
-            label="passwordConfirmation"
+            label="Password Confirmation"
             className={classes.textField}
             value={values.passwordConfirmation}
             onChange={handleChange('passwordConfirmation')}
