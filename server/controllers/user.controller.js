@@ -237,4 +237,4 @@ const changePassword = async (req, res) => {
       });
     }
   };
-export default { create, userByID, read, list, remove, update, updatePassword, resetPassword, changePasssword, checkEmail, checkUsername, pass };
+export default { create, userByID, read, list, remove, update, updatePassword, resetPassword, changePassword, checkEmail, checkUsername, pass };
