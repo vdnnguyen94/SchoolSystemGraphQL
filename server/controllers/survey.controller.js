@@ -135,6 +135,7 @@ const update = async (req, res) => {
   try {
     let survey = req.survey;
     survey = extend(survey, req.body);
+    if(req.body.dateExpire){survey.status = 'ACTIVE';}
     await survey.save();
     res.json({
       message: 'Survey Updated Successfully',
