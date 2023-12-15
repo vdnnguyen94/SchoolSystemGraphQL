@@ -165,6 +165,36 @@ const resetPassword = async (req, res) => {
 	  });
 	}
   };
+
+//Tahsin added changePassword
+
+const changePassword = async (req, res) => {
+  try {
+    const { username, currentPassword, newPassword, newPasswordConfirm } = req.body;
+    const user = req.profile;
+
+    // Verify the user's identity=
+    if (!user || !user.authenticate(currentPassword)) {
+      return res.status(401).json({ error: 'Invalid details! Password change request denied.' });
+    }
+
+    // Update the user's password
+    user.password = newPassword;
+    user.updated = Date.now();
+
+    await user.save();
+
+    user.hashed_password = undefined;
+    user.salt = undefined;
+
+    res.json({ message: 'Password has been changed successfully.', user });
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err),
+    });
+  }
+};
+
   const checkEmail = async (req, res) => {
     const { email } = req.params;
   
@@ -207,4 +237,4 @@ const resetPassword = async (req, res) => {
       });
     }
   };
-export default { create, userByID, read, list, remove, update, updatePassword, resetPassword, checkEmail, checkUsername, pass };
+export default { create, userByID, read, list, remove, update, updatePassword, resetPassword, changePasssword, checkEmail, checkUsername, pass };
