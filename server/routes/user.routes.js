@@ -15,7 +15,7 @@ router.route('/api/users/:userId')
   .delete(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.remove);
 
 // Add the new routes for updatePassword and resetPassword
-router.route('/api/users/update-password/:userId')
+router.route('/api/users/:userId/updatepassword')
   .post(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.updatePassword);
 
 router.route('/api/users/resetpassword')

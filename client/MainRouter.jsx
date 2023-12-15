@@ -47,6 +47,7 @@ import Profile from './user/Profile.jsx'
 import Switch from 'react'
 import PrivateRoute from './lib/PrivateRoute.jsx'
 import EditProfile from './user/EditProfile.jsx'
+import UpdatePassword from './user/UpdatePassword.jsx'
 import NewSurvey from './survey/NewSurvey.jsx'
 import Surveys from './survey/Surveys.jsx'
 import MySurveys from './survey/MySurveys.jsx'
@@ -76,6 +77,8 @@ function MainRouter() {
   <Route path="/user/passwordreset" element={<PasswordReset />} />
   <Route path="/user/edit/:userId" element={<PrivateRoute><EditProfile /> </PrivateRoute>}/>
   <Route path="/user/:userId" element={<Profile />} />
+  <Route path="/user/:userId/updatepassword" element={<PrivateRoute><UpdatePassword /> </PrivateRoute>} />
+
 
   <Route path="/user/:userId/newsurvey" element={<NewSurvey/>}/>
   <Route path="/surveys" element={<Surveys/>}/>

@@ -142,5 +142,25 @@ return await response.json()
 console.log(err) 
 }
 }
+const updatePassword = async (params, credentials, user) => {
+  try {
+    let response = await fetch(`/api/users/${params.userId}/updatepassword`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + credentials.t
+      },
+      body: JSON.stringify({
+        oldPassword: user.oldPassword,
+        newPassword: user.newPassword,
+        newPasswordConfirm: user.newPasswordConfirm
+      })
+    });
 
-export { create, resetPassword, list, read, update, remove,isEmailExists,isUsernameExists }
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+export { create, resetPassword, list, read, update, remove,isEmailExists,isUsernameExists,updatePassword}

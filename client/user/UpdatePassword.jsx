@@ -8,11 +8,10 @@ import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import { makeStyles } from '@material-ui/core/styles';
 import auth from '../lib/auth-helper';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
 
-import { read, update } from './api-user';
+import { read, updatePassword } from './api-user';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -37,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: 'auto',
     marginBottom: theme.spacing(2),
-    width: 160,
   },
   readOnlyField: {
     marginLeft: theme.spacing(1),
@@ -47,16 +45,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function EditProfile({ match }) {
+export default function UpdatePassword() {
   const classes = useStyles();
   const { userId } = useParams();
   const [values, setValues] = useState({
-    firstName: '',
-    lastName: '',
-    companyName: '',
     username: '',
     email: '',
-    open: false,
+    oldPassword: '',
+    newPassword: '',
+    newPasswordConfirm: '',
     error: '',
     redirectToProfile: false,
   });
@@ -64,28 +61,24 @@ export default function EditProfile({ match }) {
 
   useEffect(() => {
     const abortController = new AbortController();
-    const signal = abortController.signal;
 
     read(
       {
         userId: userId,
       },
-      { t: jwt.token },
-      signal
+      { t: jwt.token }
     ).then((data) => {
       if (data && data.error) {
         setValues({ ...values, error: data.error });
       } else {
         setValues({
           ...values,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          companyName: data.companyName,
           username: data.username,
           email: data.email,
         });
       }
     });
+
     return function cleanup() {
       abortController.abort();
     };
@@ -93,11 +86,11 @@ export default function EditProfile({ match }) {
 
   const clickSubmit = () => {
     const user = {
-      firstName: values.firstName || undefined,
-      lastName: values.lastName || undefined,
-      companyName: values.companyName || undefined,
+      oldPassword: values.oldPassword || undefined,
+      newPassword: values.newPassword || undefined,
+      newPasswordConfirm: values.newPasswordConfirm || undefined,
     };
-    update(
+    updatePassword(
       {
         userId: userId,
       },
@@ -111,58 +104,26 @@ export default function EditProfile({ match }) {
       } else {
         setValues({
           ...values,
-          userId: data._id,
           redirectToProfile: true,
         });
       }
     });
   };
 
-  const handleChange = (name) => (event) => {
-    setValues({ ...values, [name]: event.target.value });
-  };
-
   if (values.redirectToProfile) {
-    return <Navigate to={'/user/' + values.userId} />;
+    return <Navigate to={'/user/' + userId} />;
   }
 
   return (
     <Card className={classes.card}>
       <CardContent>
         <Typography variant="h6" className={classes.title}>
-          Edit Profile
+          Update Password
         </Typography>
-        <TextField
-          id="firstName"
-          label="First Name"
-          className={classes.textField}
-          value={values.firstName}
-          onChange={handleChange('firstName')}
-          margin="normal"
-        />
-        <br />
-        <TextField
-          id="lastName"
-          label="Last Name"
-          className={classes.textField}
-          value={values.lastName}
-          onChange={handleChange('lastName')}
-          margin="normal"
-        />
-        <br />
-        <TextField
-          id="companyName"
-          label="Company Name"
-          className={classes.textField}
-          value={values.companyName}
-          onChange={handleChange('companyName')}
-          margin="normal"
-        />
-        <br />
         <TextField
           id="username"
           label="Username"
-          disabled="disabled"
+          disabled
           value={values.username}
           InputProps={{
             readOnly: true,
@@ -173,11 +134,41 @@ export default function EditProfile({ match }) {
         <TextField
           id="email"
           label="Email"
-          disabled="disabled"
+          disabled
           value={values.email}
           InputProps={{
             readOnly: true,
           }}
+          margin="normal"
+        />
+        <br />
+        <TextField
+          id="oldPassword"
+          label="Old Password"
+          type="password"
+          className={classes.textField}
+          value={values.oldPassword}
+          onChange={(e) => setValues({ ...values, oldPassword: e.target.value })}
+          margin="normal"
+        />
+        <br />
+        <TextField
+          id="newPassword"
+          label="New Password"
+          type="password"
+          className={classes.textField}
+          value={values.newPassword}
+          onChange={(e) => setValues({ ...values, newPassword: e.target.value })}
+          margin="normal"
+        />
+        <br />
+        <TextField
+          id="newPasswordConfirm"
+          label="Confirm New Password"
+          type="password"
+          className={classes.textField}
+          value={values.newPasswordConfirm}
+          onChange={(e) => setValues({ ...values, newPasswordConfirm: e.target.value })}
           margin="normal"
         />
         <br />
@@ -191,26 +182,14 @@ export default function EditProfile({ match }) {
         )}
       </CardContent>
       <CardActions>
-        <Grid container direction="column" spacing={2}>
-          <Grid item>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={clickSubmit}
-              style={{ width: '200px', margin: '3px' }}
-              className={classes.submit}
-            >
-              Submit
-            </Button>
-          </Grid>
-          <Grid item>
-            <Link to={`/user/${userId}/updatepassword`}>
-              <Button color="primary" variant="contained" style={{ width: '200px', margin: '3px' }}className={classes.submit}>
-                Update Password
-              </Button>
-            </Link>
-          </Grid>
-        </Grid>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={clickSubmit}
+          className={classes.submit}
+        >
+          Update Password
+        </Button>
       </CardActions>
     </Card>
   );

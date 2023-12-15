@@ -1,5 +1,5 @@
-// api-submit.js
-
+//CENTENNIAL COLLEGE COPY RIGHT GROUP 1 VAN NGUYEN 301289600 COMP229
+//CENTENNIAL COLLEGE COPY RIGHT GROUP 1 VAN NGUYEN 301289600 COMP229
 const checkCompletedSurvey = async (params, credentials) => {
     try {
         let response = await fetch(`/api/surveys/${params.surveyId}/check`, {
