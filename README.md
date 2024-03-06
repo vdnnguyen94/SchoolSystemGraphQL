@@ -1,4 +1,4 @@
-# Survey Web Application using Node.js and React TypeScript
+# Survey Web Application using Node.js and React JS
 https://surveyappvannguyen.onrender.com/
 
 Welcome to the Survey Web Application! Below is an overview of the application's architecture, features, and how various challenges were addressed during development.
@@ -13,6 +13,7 @@ The application offers essential account management functionalities. Users can r
 
 ### Technologies, Frameworks, and Tools
 
+- NodeJS
 - MongoDB
 - Render
 - MERN stack
