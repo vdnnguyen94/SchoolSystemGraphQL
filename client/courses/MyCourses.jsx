@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography } from '@material-ui/core';
-import { useParams } from 'react-router-dom';
+import { Card, CardContent, Typography, Button} from '@material-ui/core';
+import { useParams, useNavigate } from 'react-router-dom';
 import auth from '../lib/auth-helper';
-import { listCoursesByStudent } from './api-course';
+import { listCoursesByStudent, dropCourse } from './api-course';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     border: '1px solid #ccc',
   },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
 const MyCourses = () => {
@@ -30,6 +33,7 @@ const MyCourses = () => {
   const [courses, setCourses] = useState([]);
   const [message, setMessage] = useState('');
   const jwt = auth.isAuthenticated();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -47,6 +51,27 @@ const MyCourses = () => {
 
     return () => abortController.abort();
   }, [studentNumber]);
+
+  // Handle Drop Course
+  const handleDropCourse = (courseId) => {
+    dropCourse({ studentNumber, courseId }, {t: jwt.token}).then((data) => {
+      if (data.error) {
+        setMessage(`Error: ${data.error}`);
+      } else {
+        alert('Course dropped successfully!');
+        // Refresh the course list
+        listCoursesByStudent({ studentNumber }).then((updatedCourses) => {
+          setCourses(updatedCourses);
+        });
+      }
+    });
+  };
+
+  // Handle Change Section
+  const handleChangeSection = (courseId) => {
+    navigate(`/course/${courseId}/student/${studentNumber}/changeSection`);
+  };
+
 
   return (
     <div>
@@ -69,6 +94,24 @@ const MyCourses = () => {
               <Card key={course._id} className={classes.courseCard}>
                 <Typography variant="h6">{course.courseName} ({course.courseCode})</Typography>
                 <Typography>Semester: {course.semester} | Section: {course.section}</Typography>
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={classes.button}
+                  onClick={() => handleChangeSection(course._id)}
+                >
+                  Change Section
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  className={classes.button}
+                  onClick={() => handleDropCourse(course._id)}
+                >
+                  Drop Course
+                </Button>
+
               </Card>
             ))
           )}

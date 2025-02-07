@@ -64,7 +64,7 @@ const listCoursesByStudent = async (params, signal) => {
 const dropCourse = async (params, credentials) => {
     try {
         let response = await fetch(`/api/student/${params.studentNumber}/course/${params.courseId}`, {
-            method: 'PUT',  // Based on course.routes.js, dropCourse uses PUT
+            method: 'PUT',  
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
