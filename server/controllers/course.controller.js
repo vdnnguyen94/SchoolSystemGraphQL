@@ -164,8 +164,9 @@ const changeSection = async (req, res) => {
       return res.status(400).json({ error: 'Student is already registered in the new section.' });
     }
 
-    // Remove student from old course
-    oldCourse.students = oldCourse.students.filter(id => id.toString() !== student._id.toString());
+
+    // Remove student from course using .filter()
+    oldCourse.students = course.students.filter(s => s._id.toString() !== student._id.toString());
     await oldCourse.save();
 
     // Add student to new course
