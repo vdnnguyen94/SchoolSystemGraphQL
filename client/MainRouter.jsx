@@ -9,7 +9,7 @@ import Signin from './lib/Signin.jsx'
 import RegisterCourses from './courses/RegisterCourses.jsx'
 import MyCourses from './courses/MyCourses.jsx'
 import AllCourses from './courses/AllCourses.jsx';
-
+import CourseDetails from './courses/CourseDetails.jsx';
 import ChangeSection from './courses/ChangeSection.jsx'
 import SignupByAdmin from './student/SignupbyAdmin.jsx';
 
@@ -49,6 +49,7 @@ function MainRouter() {
   <Route path="/student/:studentNumber/register" element={<RegisterCourses />} />
   <Route path="/mycourses/:studentNumber" element={<MyCourses />} />
   <Route path="/course/:courseId/student/:studentNumber/changeSection" element={<ChangeSection />} />
+  <Route path="/course/:courseId" element={<CourseDetails />} />
   <Route path="/admin/create-student" element={<SignupByAdmin />} />
   <Route path="/admin/courses" element={<AllCourses />} />
 

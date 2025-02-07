@@ -47,7 +47,7 @@ const listAllCourse = async (req, res) => {
 
 const courseByID = async (req, res, next, id) => {
   try {
-    const course = await Course.findById(id);
+    const course = await Course.findById(id).populate('students', 'firstName lastName studentNumber');
     if (!course) {
       return res.status(404).json({ message: 'Course not found.' });
     }
@@ -116,13 +116,15 @@ const dropCourse = async (req, res) => {
     const course = req.course;
     const student = req.profile;
 
-    // Check if student is enrolled
-    if (!course.students.includes(student._id)) {
-      return res.status(400).json({ message: 'Student is not registered in this course.' });
+    // Check if student is enrolled using .some()
+    if (!course.students.some(s => s._id.toString() === student._id.toString())) {
+      return res.status(400).json({ error: 'Student is not registered in this course.' });
     }
 
-    // Remove student from course
-    course.students = course.students.filter(id => id.toString() !== student._id.toString());
+    // Remove student from course using .filter()
+    course.students = course.students.filter(s => s._id.toString() !== student._id.toString());
+
+    // Save the updated course
     await course.save();
 
     res.status(200).json({
