@@ -73,7 +73,7 @@ const AllCourses = () => {
                   color="primary"
                   className={classes.button}
                   component={Link}
-                  to={`/courses/${course._id}`}
+                  to={`/course/${course._id}`}
                 >
                   View Course Details
                 </Button>
