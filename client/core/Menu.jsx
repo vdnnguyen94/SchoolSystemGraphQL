@@ -57,8 +57,8 @@ export default function Menu() {
             {/* Show "My Courses" and "Register Course" ONLY if NOT an Admin */}
             {!isAdmin && (
               <>
-                <Link to={`/courses/${student.studentNumber}`}>
-                  <Button style={isActive(location, `/courses/${student.studentNumber}`)}>My Courses</Button>
+                <Link to={`/mycourses/${student.studentNumber}`}>
+                  <Button style={isActive(location, `/mycourses/${student.studentNumber}`)}>My Courses</Button>
                 </Link>
 
                 <Link to={`/student/${student.studentNumber}/register`}>

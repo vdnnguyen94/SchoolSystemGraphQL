@@ -84,16 +84,16 @@ const resetPassword = async (user) => {
     }
   };
 const list = async (signal) => { 
-try {
-let response = await fetch('/api/users/', { 
-method: 'GET',
+  try {
+  let response = await fetch('/api/users/', { 
+  method: 'GET',
 
-signal: signal, 
-})
-return await response.json() 
-} catch(err) {
-console.log(err) 
-}
+  signal: signal, 
+  })
+  return await response.json() 
+  } catch(err) {
+  console.log(err) 
+  }
 }
 const read = async (params, credentials, signal) => { 
 try {

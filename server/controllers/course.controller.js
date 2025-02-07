@@ -36,10 +36,7 @@ const listAllCourse = async (req, res) => {
     if (!courses.length) {
       return res.status(404).json({ message: 'No courses found.' });
     }
-    res.status(200).json({
-      message: 'Courses retrieved successfully.',
-      courses,
-    });
+    res.status(200).json(courses);
   } catch (err) {
     res.status(500).json({
       message: 'Error retrieving courses.',
@@ -104,10 +101,7 @@ const listCoursesByStudent = async (req, res) => {
     if (!courses.length) {
       return res.status(404).json({ message: 'No courses found for this student.' });
     }
-    res.status(200).json({
-      message: 'Courses retrieved successfully.',
-      courses,
-    });
+    res.status(200).json(courses);
   } catch (error) {
     res.status(500).json({
       message: 'Error retrieving courses for student.',
@@ -199,7 +193,7 @@ const updateCourse = async (req, res) => {
 
     res.status(200).json({
       message: 'Course updated successfully.',
-      course: course,
+      course,
     });
   } catch (error) {
     res.status(500).json({
@@ -215,14 +209,7 @@ const listUnregisteredCourses = async (req, res) => {
 
     const courses = await Course.find({ students: { $ne: student._id } });
 
-    if (!courses.length) {
-      return res.status(404).json({ message: 'No unregistered courses found for this student.' });
-    }
-
-    res.status(200).json({
-      message: 'Unregistered courses retrieved successfully.',
-      courses,
-    });
+    res.status(200).json(courses);
   } catch (error) {
     res.status(500).json({
       message: 'Error retrieving unregistered courses.',

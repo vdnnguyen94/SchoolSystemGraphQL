@@ -7,6 +7,9 @@ import Users from './user/Users.jsx'
 import Signup from './student/Signup.jsx'
 import PasswordReset from './user/PasswordReset.jsx'
 import Signin from './lib/Signin.jsx'
+import RegisterCourses from './courses/RegisterCourses.jsx'
+import MyCourses from './courses/MyCourses.jsx'
+
 import Profile from './user/Profile.jsx'
 import Switch from 'react'
 import PrivateRoute from './lib/PrivateRoute.jsx'
@@ -39,6 +42,9 @@ function MainRouter() {
   <Route path="/users" element={<Users />} />
   <Route path="/signup" element={<Signup />} />
   <Route path="/signin" element={<Signin />} />
+  <Route path="/student/:studentNumber/register" element={<RegisterCourses />} />
+  <Route path="/mycourses/:studentNumber" element={<MyCourses />} />
+
   <Route path="/user/passwordreset" element={<PasswordReset />} />
   <Route path="/user/edit/:userId" element={<PrivateRoute><EditProfile /> </PrivateRoute>}/>
   <Route path="/user/:userId" element={<Profile />} />
