@@ -60,9 +60,9 @@ const Home = ({ isUserSignedOut }) => {
       <CardContent>
         <div className={classes.buttonContainer}>
           {isLoggedIn ? (
-            <Link to="/mysurveys" style={{ textDecoration: 'none' }}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
               <Button variant="contained" color="primary" className={classes.button}>
-                MY SURVEY
+                Main Page
               </Button>
             </Link>
           ) : (
