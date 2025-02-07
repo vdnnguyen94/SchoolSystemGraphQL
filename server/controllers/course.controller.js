@@ -209,5 +209,27 @@ const updateCourse = async (req, res) => {
   }
 };
 
+const listUnregisteredCourses = async (req, res) => {
+  try {
+    const student = req.profile;
 
-export default {create, listAllCourse, read, courseByID, listCoursesByStudent,register, dropCourse, changeSection, updateCourse};
+    const courses = await Course.find({ students: { $ne: student._id } });
+
+    if (!courses.length) {
+      return res.status(404).json({ message: 'No unregistered courses found for this student.' });
+    }
+
+    res.status(200).json({
+      message: 'Unregistered courses retrieved successfully.',
+      courses,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error retrieving unregistered courses.',
+      error: error.message,
+    });
+  }
+};
+
+
+export default {create, listAllCourse, read, courseByID, listCoursesByStudent,register, dropCourse, changeSection, updateCourse, listUnregisteredCourses };

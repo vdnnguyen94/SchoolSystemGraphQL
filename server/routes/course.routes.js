@@ -22,11 +22,8 @@ router.route('/api/student/:studentNumber/course/:courseId')
   .put(authCtrl.requireSignin, courseCtrl.dropCourse);
 router.route('/api/courses/student/:studentNumber')
   .get(courseCtrl.listCoursesByStudent);  
-
-
-
-
-
+router.route('/api/courses/unregistered/:studentId')
+  .get(courseCtrl.listUnregisteredCourses);
 router.param('studentNumber', studentCtrl.studentByStudentNumber);
 router.param('courseId', courseCtrl.courseByID);
 
