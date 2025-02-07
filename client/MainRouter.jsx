@@ -12,7 +12,7 @@ import AllCourses from './courses/AllCourses.jsx';
 import CourseDetails from './courses/CourseDetails.jsx';
 import ChangeSection from './courses/ChangeSection.jsx'
 import SignupByAdmin from './student/SignupbyAdmin.jsx';
-
+import Students from './student/Students.jsx';
 import Profile from './user/Profile.jsx'
 import Switch from 'react'
 import PrivateRoute from './lib/PrivateRoute.jsx'
@@ -47,6 +47,7 @@ function MainRouter() {
   <Route path="/signup" element={<Signup />} />
   <Route path="/signin" element={<Signin />} />
   <Route path="/student/:studentNumber/register" element={<RegisterCourses />} />
+  <Route path="/admin/students" element={<Students />} />
   <Route path="/mycourses/:studentNumber" element={<MyCourses />} />
   <Route path="/course/:courseId/student/:studentNumber/changeSection" element={<ChangeSection />} />
   <Route path="/course/:courseId" element={<CourseDetails />} />

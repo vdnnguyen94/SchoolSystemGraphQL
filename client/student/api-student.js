@@ -20,5 +20,21 @@ const create = async (student) => {
         return { error: 'Something went wrong. Please try again.' };
     }
 };
+const listStudents = async () => {
+    try {
+        let response = await fetch('/api/students', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+        return await response.json();
+    } catch (err) {
+        console.log(err);
+        return { error: err };
+    }
+};
+
+export { listStudents };
 
 export { create };
