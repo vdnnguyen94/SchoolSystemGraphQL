@@ -66,3 +66,4 @@ COMP229 Group 1 Project
 // go to client folder: yarn
 // then 'yarn build' in the client
 // go to the parent folder node server.js
+Checking
