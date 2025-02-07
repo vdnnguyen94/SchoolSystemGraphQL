@@ -8,6 +8,8 @@ import Signup from './student/Signup.jsx'
 import Signin from './lib/Signin.jsx'
 import RegisterCourses from './courses/RegisterCourses.jsx'
 import MyCourses from './courses/MyCourses.jsx'
+import AllCourses from './courses/AllCourses.jsx';
+
 import ChangeSection from './courses/ChangeSection.jsx'
 import SignupByAdmin from './student/SignupbyAdmin.jsx';
 
@@ -48,7 +50,7 @@ function MainRouter() {
   <Route path="/mycourses/:studentNumber" element={<MyCourses />} />
   <Route path="/course/:courseId/student/:studentNumber/changeSection" element={<ChangeSection />} />
   <Route path="/admin/create-student" element={<SignupByAdmin />} />
-
+  <Route path="/admin/courses" element={<AllCourses />} />
 
   <Route path="/user/passwordreset" element={<PasswordReset />} />
   <Route path="/user/edit/:userId" element={<PrivateRoute><EditProfile /> </PrivateRoute>}/>
