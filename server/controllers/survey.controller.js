@@ -2,7 +2,7 @@ import Survey from '../models/survey.model.js';
 import extend from 'lodash/extend.js';
 import errorHandler from './error.controller.js';
 import authCtrl from './auth.controller.js';
-import User from '../models/user.model.js';
+import User from '../models/student.model.js';
 
 const create = async (req, res) => {
   try {

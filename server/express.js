@@ -1,19 +1,3 @@
-/*import express from 'express'
-import bodyParser from 'body-parser'
-import cookieParser from 'cookie-parser'
-import compress from 'compression'
-import cors from 'cors'
-import helmet from 'helmet'
-const app = express()
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cookieParser())
-app.use(compress())
-app.use(helmet())
-app.use(cors())
-export default app
-*/
-
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
@@ -21,6 +5,8 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 import Template from './../template.js'
+import studentRoutes from './routes/student.routes.js'
+import courseRoutes from './routes/course.routes.js'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import surveyRoutes from './routes/survey.routes.js'
@@ -74,6 +60,9 @@ app.use('/', userRoutes)
 app.use('/', authRoutes)
 app.use('/', surveyRoutes)
 app.use('/', questionRoutes)
+app.use('/', studentRoutes)
+app.use('/', courseRoutes)
+app.use('/', userRoutes)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())

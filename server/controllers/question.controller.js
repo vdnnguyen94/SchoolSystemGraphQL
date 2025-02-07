@@ -1,6 +1,6 @@
 import Survey from '../models/survey.model.js';
 import Question from '../models/question.model.js';
-import User from '../models/user.model.js';
+import User from '../models/student.model.js';
 import extend from 'lodash/extend.js';
 import errorHandler from './error.controller.js';
 

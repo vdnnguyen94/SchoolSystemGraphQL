@@ -1,6 +1,6 @@
 import Survey from '../models/survey.model.js';
 import Question from '../models/question.model.js';
-import User from '../models/user.model.js';
+import User from '../models/student.model.js';
 import CompletedSurvey from '../models/completedSurvey.model.js';
 import errorHandler from './error.controller.js';
 import questionCtrl from './question.controller.js';

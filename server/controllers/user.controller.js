@@ -1,10 +1,7 @@
-import User from '../models/user.model.js';
+import User from '../models/student.model.js';
 import extend from 'lodash/extend.js';
 import errorHandler from './error.controller.js';
 
-//VanNguyen added firstName, lastName companyName
-//VanNguyen add updatePassword, resetPassword  
-//Van Nguyen added successful message for update, and remove function
 
 const create = async (req, res) => {
   console.log(req.body);

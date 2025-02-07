@@ -1,18 +1,30 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 
-const UserSchema = new mongoose.Schema({
-  username: {
+const studentSchema = new mongoose.Schema({
+  studentNumber: {
     type: String,
     trim: true,
     unique: true,
-    required: 'Username is required'
+    required: 'studentNumber is required'
   },
   firstName: {
     type: String,
     trim: true
   },
   lastName: {
+    type: String,
+    trim: true
+  },
+  address: {
+    type: String,
+    trim: true
+  },
+  city: {
+    type: String,
+    trim: true
+  },
+  phoneNumber: {
     type: String,
     trim: true
   },
@@ -23,13 +35,25 @@ const UserSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
     required: 'Email is required'
   },
-  companyName: {
+  program: {
+    type: String,
+    trim: true
+  },
+  hobbies: {
+    type: String,
+    trim: true
+  },
+  techSkills: {
     type: String,
     trim: true
   },
   created: {
     type: Date,
     default: Date.now
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
   },
   updated: {
     type: Date,
@@ -42,7 +66,7 @@ const UserSchema = new mongoose.Schema({
   salt: String
 });
 
-UserSchema.virtual('password')
+studentSchema.virtual('password')
   .set(function(password) {
     this._password = password;
     this.salt = this.makeSalt();
@@ -53,7 +77,7 @@ UserSchema.virtual('password')
     return this._password;
   });
 
-UserSchema.path('hashed_password').validate(function(v) {
+studentSchema.path('hashed_password').validate(function(v) {
   if (this._password && this._password.length < 6) {
     this.invalidate('password', 'Password must be at least 6 characters.');
   }
@@ -62,7 +86,7 @@ UserSchema.path('hashed_password').validate(function(v) {
   }
 }, null);
 
-UserSchema.methods = {
+studentSchema.methods = {
   authenticate: function(plainText) {
     return this.encryptPassword(plainText) === this.hashed_password;
   },
@@ -83,4 +107,4 @@ UserSchema.methods = {
   }
 };
 
-export default mongoose.model('User', UserSchema);
+export default mongoose.model('Student', studentSchema);

@@ -40,7 +40,7 @@ mongoose.Promise = global.Promise
 mongoose.connect(config.mongoUri, { useNewUrlParser: true,
 //useCreateIndex: true, 
 useUnifiedTopology: true,
-dbName: 'SurveyApp' } )
+dbName: 'SchoolSystem' } )
 
  .then(() => {
 console.log("Connected to the database!");
