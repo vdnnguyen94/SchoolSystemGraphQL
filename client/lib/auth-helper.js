@@ -15,6 +15,13 @@ const auth = {
       sessionStorage.setItem('jwt', JSON.stringify(jwt))
     cb()
   },
+  isAdmin() {
+    if (typeof window !== "undefined" && localStorage.getItem("jwt")) {
+      const user = JSON.parse(localStorage.getItem("jwt"));
+      return user?.student?.isAdmin || false;
+    }
+    return false;
+  },
   clearJWT(cb) {
     if (typeof window !== "undefined")
       sessionStorage.removeItem('jwt')
