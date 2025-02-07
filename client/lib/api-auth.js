@@ -1,35 +1,40 @@
-//Van Nguyen implement resetPassword
-//Van Nguyen implement validation for sign in
-const signin = async (user) => { 
-try {
-//validation username
-if (!user.username) {
-    return { error: 'Username required' };}   
-if (user.password.length < 6) {
-        return { error: 'Password has to contain 6 letters or numbers;' };}
-let response = await fetch('/auth/signin/', { 
-method: 'POST',
-headers: {
-'Accept': 'application/json',
-'Content-Type': 'application/json' 
-},
+const signin = async (student) => { 
+  try {
+      // Validate studentNumber and password before sending request
+      if (!student.studentNumber) {
+          return { error: 'Student Number is required' };
+      }
+      if (!student.password) {
+          return { error: 'Password is required' };
+      }
+      if (student.password.length < 6) {
+          return { error: 'Password must be at least 6 characters long' };
+      }
 
-body: JSON.stringify(user)
-})
-return await response.json() 
-} catch(err) {
-console.log(err) 
-}
-}
+      let response = await fetch('/auth/signin', {  // Fixed extra slash
+          method: 'POST',
+          headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify(student)
+      });
+
+      return await response.json();
+  } catch (err) {
+      console.log('Sign-in error:', err);
+      return { error: 'Server error. Please try again later.' };
+  }
+};
+
 const signout = async () => { 
-try {
-let response = await fetch('/auth/signout/', { method: 'GET' }) 
-return await response.json()
-} catch(err) { 
-console.log(err)
-} 
-}
+  try {
+      let response = await fetch('/auth/signout', { method: 'GET' }); // Fixed extra slash
+      return await response.json();
+  } catch (err) { 
+      console.log('Sign-out error:', err);
+      return { error: 'Could not sign out. Please try again.' };
+  }
+};
 
-
-
-  export { signin, signout};
+export { signin, signout };

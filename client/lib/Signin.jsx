@@ -55,19 +55,19 @@ export default function Signin(props) {
   console.log(location.state)
   const classes = useStyles()
   const [values, setValues] = useState({
-      username: '',
+      studentNumber: '',
       password: '',
       error: '',
       redirectToReferrer: false
   })
 
   const clickSubmit = () => {
-    const user = {
-      username: values.username || undefined,
+    const student = {
+      studentNumber: values.studentNumber || undefined,
       password: values.password || undefined
     }
-console.log(user)
-    signin(user).then((data) => {
+    console.log(student)
+    signin(student).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error})
       } else {
@@ -101,7 +101,7 @@ console.log(user)
           <Typography variant="h6" className={classes.title}>
             Sign In
           </Typography>
-          <TextField id="username" type="username" label="username" className={classes.textField} value={values.username} onChange={handleChange('username')} margin="normal"/><br/>
+          <TextField id="studentNumber" type="username" label="studentNumber" className={classes.textField} value={values.studentNumber} onChange={handleChange('studentNumber')} margin="normal"/><br/>
           <TextField id="password" type="password" label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal"/>
           <br/> {
             values.error && (<Typography component="p" color="error">
@@ -114,11 +114,11 @@ console.log(user)
           <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>LOG IN</Button>
           
         </CardActions>
-        <Link to={"/user/passwordreset"}>
+        {/* <Link to={"/user/passwordreset"}>
           <Button color="primary" variant="contained">
             Reset Password
           </Button>
-        </Link>
+        </Link> */}
         
       </Card>
     )
