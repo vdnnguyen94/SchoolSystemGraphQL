@@ -144,7 +144,7 @@ const changeSection = async (req, res) => {
     const student = req.profile;
     const newSection = req.body.newSection;
     if (!newSection) {
-      return res.status(400).json({ message: 'New section number is required.' });
+      return res.status(400).json({ error: 'New section number is required.' });
     }
     // Find new course by matching courseCode, semester, and newSection
     const newCourse = await Course.findOne({
@@ -154,12 +154,12 @@ const changeSection = async (req, res) => {
     });
 
     if (!newCourse) {
-      return res.status(404).json({ message: 'New section not found for this course and semester.' });
+      return res.status(404).json({ error: 'New section not found for this course and semester.' });
     }
 
     // Check if student is already in the new section
     if (newCourse.students.includes(student._id)) {
-      return res.status(400).json({ message: 'Student is already registered in the new section.' });
+      return res.status(400).json({ error: 'Student is already registered in the new section.' });
     }
 
     // Remove student from old course

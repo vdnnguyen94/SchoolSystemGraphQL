@@ -9,7 +9,7 @@ import PasswordReset from './user/PasswordReset.jsx'
 import Signin from './lib/Signin.jsx'
 import RegisterCourses from './courses/RegisterCourses.jsx'
 import MyCourses from './courses/MyCourses.jsx'
-
+import ChangeSection from './courses/ChangeSection.jsx';
 import Profile from './user/Profile.jsx'
 import Switch from 'react'
 import PrivateRoute from './lib/PrivateRoute.jsx'
@@ -44,12 +44,12 @@ function MainRouter() {
   <Route path="/signin" element={<Signin />} />
   <Route path="/student/:studentNumber/register" element={<RegisterCourses />} />
   <Route path="/mycourses/:studentNumber" element={<MyCourses />} />
-
+  <Route path="/course/:courseId/student/:studentNumber/changeSection" element={<ChangeSection />} />
   <Route path="/user/passwordreset" element={<PasswordReset />} />
   <Route path="/user/edit/:userId" element={<PrivateRoute><EditProfile /> </PrivateRoute>}/>
   <Route path="/user/:userId" element={<Profile />} />
   <Route path="/user/:userId/updatepassword" element={<PrivateRoute><UpdatePassword /> </PrivateRoute>} />
-
+  <Route path="/user/:userId/updatepassword" element={<PrivateRoute><UpdatePassword /> </PrivateRoute>} />
 
   <Route path="/user/:userId/newsurvey" element={<NewSurvey/>}/>
   <Route path="/surveys" element={<Surveys/>}/>

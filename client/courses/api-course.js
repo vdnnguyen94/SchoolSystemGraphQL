@@ -114,4 +114,19 @@ const createCourse = async (course, credentials) => {
     }
 };
 
-export {  listCourses, listUnregisteredCourses, listCoursesByStudent, registerCourse, dropCourse, changeCourseSection, createCourse };
+const getCourseById = async (courseId) => {
+    try {
+        let response = await fetch(`/api/courses/${courseId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        });
+        return await response.json();
+    } catch (err) {
+        console.log(err);
+        return { error: err };
+    }
+};
+
+export {  listCourses, listUnregisteredCourses, listCoursesByStudent, registerCourse, dropCourse, getCourseById, changeCourseSection, createCourse };
