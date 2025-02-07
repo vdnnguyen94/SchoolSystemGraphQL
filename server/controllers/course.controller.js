@@ -166,7 +166,7 @@ const changeSection = async (req, res) => {
 
 
     // Remove student from course using .filter()
-    oldCourse.students = course.students.filter(s => s._id.toString() !== student._id.toString());
+    oldCourse.students = oldCourse.students.filter(s => s._id.toString() !== student._id.toString());
     await oldCourse.save();
 
     // Add student to new course
