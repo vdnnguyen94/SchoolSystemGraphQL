@@ -11,8 +11,7 @@ import MyCourses from './courses/MyCourses.jsx'
 import AllCourses from './courses/AllCourses.jsx';
 import CourseDetails from './courses/CourseDetails.jsx';
 import ChangeSection from './courses/ChangeSection.jsx'
-import SignupByAdmin from './student/SignupbyAdmin.jsx';
-
+import StudentSignUp from './student/StudentSignup.jsx';
 
 import CreateCourse from './courses/CreateCourse.jsx';
 import Students from './student/Students.jsx';
@@ -55,7 +54,7 @@ function MainRouter() {
   <Route path="/mycourses/:studentNumber" element={<MyCourses />} />
   <Route path="/course/:courseId/student/:studentNumber/changeSection" element={<ChangeSection />} />
   <Route path="/course/:courseId" element={<CourseDetails />} />
-  <Route path="/admin/create-student" element={<SignupByAdmin/>} />
+  <Route path="/admin/create-student" element={<StudentSignUp/>} />
   <Route path="/myAccount" element={<StudentDetail />} />
   <Route path="/admin/courses" element={<AllCourses />} />
   <Route path="/admin/create-course" element={<CreateCourse />} />
