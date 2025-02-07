@@ -34,10 +34,10 @@ const useStyles = makeStyles(theme => ({
   },
   submit: {
     margin: 'auto',
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(0.5),
     // Increase the button size by setting padding and font size
     padding: theme.spacing(2),
-    fontSize: '1.2rem',
+    fontSize: '0.8rem',
     width: '300px',
   },
   resetButton: {
@@ -46,6 +46,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(1),
     fontSize: '0.6rem',
+  },
+  demoButton: {
+    margin: theme.spacing(1),
+    fontSize: '0.9rem',
   },
   
 }))
@@ -77,7 +81,19 @@ export default function Signin(props) {
         })
       }
     })
-  }
+  };
+  const handleDemoLogin = (studentNumber, password) => {
+    setValues({ studentNumber, password, error: '' });
+    signin({ studentNumber, password }).then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        auth.authenticate(data, () => {
+          setValues({ ...values, error: '', redirectToReferrer: true });
+        });
+      }
+    });
+  };
 
 
   const handleChange = name => event => {
@@ -114,12 +130,27 @@ export default function Signin(props) {
           <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>LOG IN</Button>
           
         </CardActions>
-        {/* <Link to={"/user/passwordreset"}>
-          <Button color="primary" variant="contained">
-            Reset Password
-          </Button>
-        </Link> */}
-        
+
+      <CardActions>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+          onClick={() => handleDemoLogin('101', 'qwe123')}
+        >
+          Demo Student Sign In
+        </Button>
+      </CardActions>
+      <CardActions>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+          onClick={() => handleDemoLogin('10001', 'qwe123')}
+        >
+          Demo Admin Sign In
+        </Button>
+      </CardActions>
       </Card>
     )
 }

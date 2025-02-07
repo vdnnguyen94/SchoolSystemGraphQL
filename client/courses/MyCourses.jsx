@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Button} from '@material-ui/core';
+import { Card, CardContent, Typography, Button } from '@material-ui/core';
 import { useParams, useNavigate } from 'react-router-dom';
 import auth from '../lib/auth-helper';
 import { listCoursesByStudent, dropCourse } from './api-course';
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 const MyCourses = () => {
   const classes = useStyles();
   const { studentNumber } = useParams(); 
-  const [courses, setCourses] = useState([]);
+  const [courses, setCourses] = useState([]); // Ensure courses is always an array
   const [message, setMessage] = useState('');
   const jwt = auth.isAuthenticated();
   const navigate = useNavigate();
@@ -42,8 +42,10 @@ const MyCourses = () => {
     listCoursesByStudent({ studentNumber }, signal).then((data) => {
       if (data.error) {
         setMessage(`Error: ${data.error}`);
-      } else if (data.length === 0) {
-        setMessage('You are not registered for any courses.');
+        setCourses([]); // Set empty array if there's an error
+      } else if (!data || !Array.isArray(data)) {
+        setMessage('No registered courses found.');
+        setCourses([]); // Ensure it's an empty array
       } else {
         setCourses(data);
       }
@@ -54,14 +56,14 @@ const MyCourses = () => {
 
   // Handle Drop Course
   const handleDropCourse = (courseId) => {
-    dropCourse({ studentNumber, courseId }, {t: jwt.token}).then((data) => {
+    dropCourse({ studentNumber, courseId }, { t: jwt.token }).then((data) => {
       if (data.error) {
         setMessage(`Error: ${data.error}`);
       } else {
         alert('Course dropped successfully!');
         // Refresh the course list
         listCoursesByStudent({ studentNumber }).then((updatedCourses) => {
-          setCourses(updatedCourses);
+          setCourses(updatedCourses || []); // Ensure courses is always an array
         });
       }
     });
@@ -71,7 +73,6 @@ const MyCourses = () => {
   const handleChangeSection = (courseId) => {
     navigate(`/course/${courseId}/student/${studentNumber}/changeSection`);
   };
-
 
   return (
     <div>
@@ -88,7 +89,7 @@ const MyCourses = () => {
           )}
 
           {courses.length === 0 ? (
-            <Typography>No registered courses found.</Typography>
+            <Typography>Please Register Your Courses</Typography>
           ) : (
             courses.map((course) => (
               <Card key={course._id} className={classes.courseCard}>
@@ -111,7 +112,6 @@ const MyCourses = () => {
                 >
                   Drop Course
                 </Button>
-
               </Card>
             ))
           )}
