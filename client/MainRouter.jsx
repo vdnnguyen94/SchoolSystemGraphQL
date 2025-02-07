@@ -5,11 +5,12 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './core/Home' 
 import Users from './user/Users.jsx'
 import Signup from './student/Signup.jsx'
-import PasswordReset from './user/PasswordReset.jsx'
 import Signin from './lib/Signin.jsx'
 import RegisterCourses from './courses/RegisterCourses.jsx'
 import MyCourses from './courses/MyCourses.jsx'
-import ChangeSection from './courses/ChangeSection.jsx';
+import ChangeSection from './courses/ChangeSection.jsx'
+import SignupByAdmin from './student/SignupbyAdmin.jsx';
+
 import Profile from './user/Profile.jsx'
 import Switch from 'react'
 import PrivateRoute from './lib/PrivateRoute.jsx'
@@ -25,6 +26,7 @@ import EditSurveyDetails from './survey/EditSurveyDetails.jsx'
 import Result from './survey/Result.jsx'
 import NewQuestion from './question/NewQuestion.jsx'
 import EditQuestion from './question/EditQuestion.jsx'
+import PasswordReset from './user/PasswordReset.jsx'
 //import NewSurvey from './survey/NewSurvey.jsx'
 
 
@@ -45,12 +47,14 @@ function MainRouter() {
   <Route path="/student/:studentNumber/register" element={<RegisterCourses />} />
   <Route path="/mycourses/:studentNumber" element={<MyCourses />} />
   <Route path="/course/:courseId/student/:studentNumber/changeSection" element={<ChangeSection />} />
+  <Route path="/admin/create-student" element={<SignupByAdmin />} />
+
+
   <Route path="/user/passwordreset" element={<PasswordReset />} />
   <Route path="/user/edit/:userId" element={<PrivateRoute><EditProfile /> </PrivateRoute>}/>
   <Route path="/user/:userId" element={<Profile />} />
   <Route path="/user/:userId/updatepassword" element={<PrivateRoute><UpdatePassword /> </PrivateRoute>} />
-  <Route path="/user/:userId/updatepassword" element={<PrivateRoute><UpdatePassword /> </PrivateRoute>} />
-
+ 
   <Route path="/user/:userId/newsurvey" element={<NewSurvey/>}/>
   <Route path="/surveys" element={<Surveys/>}/>
   <Route path="/mysurveys" element={<MySurveys/>}/>
