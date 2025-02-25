@@ -8,17 +8,13 @@ import { expressjwt } from "express-jwt";
 import schema from './server/graphql/schema.js'; 
 
 // Connect to MongoDB
-mongoose.Promise = global.Promise;
-mongoose.connect(config.mongoUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: 'SchoolSystem'
-})
+mongoose.connect(config.mongoUri, { dbName: 'SchoolSystem' })
   .then(() => {
-    console.log("Connected to MongoDB:", config.mongoUri);
+    console.log("SUCCESS Connected to MongoDB:", config.mongoUri);
+    console.log("Using Database:", mongoose.connection.db.databaseName); // Logs the database name
   })
   .catch(err => {
-    console.error("ERROR---- MongoDB connection error:", err);
+    console.error("ERROR MongoDB connection error:", err);
   });
 
 mongoose.connection.on('error', () => {

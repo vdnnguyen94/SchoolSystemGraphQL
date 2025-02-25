@@ -1,0 +1,30 @@
+{
+  students {
+    studentNumber
+    firstName
+    lastName
+    email
+  }
+}
+
+{
+  courses {
+    courseCode
+    courseName
+    section
+    semester
+  }
+
+  courses {
+    courseCode
+    courseName
+    section
+    semester
+    students {
+      studentNumber
+      firstName
+      lastName
+    }
+  }
+  
+}

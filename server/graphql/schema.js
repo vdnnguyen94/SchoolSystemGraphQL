@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../../config/config.js';
 
-// ✅ Student Type
+// Student Type
 const StudentType = new GraphQLObjectType({
   name: 'Student',
   fields: () => ({
@@ -18,14 +18,26 @@ const StudentType = new GraphQLObjectType({
   })
 });
 
-// ✅ Query Type
+const CourseType = new GraphQLObjectType({
+    name: 'Course',
+    fields: () => ({
+      id: { type: GraphQLID },
+      courseCode: { type: GraphQLString },
+      courseName: { type: GraphQLString },
+      section: { type: GraphQLString },
+      semester: { type: GraphQLString },
+      students: { type: new GraphQLList(StudentType) } 
+    })
+  });
+
+  
+// Query Type
 const Query = new GraphQLObjectType({
   name: 'Query',
   fields: {
     students: {
       type: new GraphQLList(StudentType),
-      resolve: async (_, __, context) => {
-        if (!context.auth) throw new Error("Unauthorized!");
+      resolve: async (_, __) => {
         return await Student.find();
       }
     },
@@ -36,11 +48,17 @@ const Query = new GraphQLObjectType({
         if (!context.auth) throw new Error("Unauthorized!");
         return await Student.findOne({ studentNumber });
       }
+    },
+    courses: {
+        type: new GraphQLList(CourseType),
+        resolve: async () => {
+          return await Course.find().populate('students');
+        }
+      }
     }
-  }
 });
 
-// ✅ Mutations
+// Mutations
 const Mutation = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
@@ -74,5 +92,5 @@ const Mutation = new GraphQLObjectType({
   }
 });
 
-// ✅ Export GraphQL Schema
+// Export GraphQL Schema
 export default new GraphQLSchema({ query: Query, mutation: Mutation });
