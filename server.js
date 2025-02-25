@@ -4,7 +4,8 @@ import express from 'express';
 import cors from 'cors';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-import schema from './graphql/schema.js'; // Schema will be created next
+import { expressjwt } from "express-jwt";
+import schema from './server/graphql/schema.js'; 
 
 // Connect to MongoDB
 mongoose.Promise = global.Promise;
@@ -28,6 +29,16 @@ mongoose.connection.on('error', () => {
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// JWT Middleware - Protect GraphQL API
+app.use(
+  expressjwt({
+    secret: config.jwtSecret,
+    algorithms: ["HS256"],
+    credentialsRequired: false // Allow unauthenticated users
+  })
+);
+
 
 // Start Apollo Server
 const server = new ApolloServer({ schema });
