@@ -14,10 +14,10 @@ mongoose.connect(config.mongoUri, {
   dbName: 'SchoolSystem'
 })
   .then(() => {
-    console.log("✅ Connected to MongoDB:", config.mongoUri);
+    console.log("Connected to MongoDB:", config.mongoUri);
   })
   .catch(err => {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("ERROR---- MongoDB connection error:", err);
   });
 
 mongoose.connection.on('error', () => {
@@ -38,7 +38,7 @@ app.use('/graphql', expressMiddleware(server));
 
 // Start Express Server
 app.listen(config.port, () => {
-  console.info(`🚀 Server running on http://localhost:${config.port}/graphql`);
+  console.info(`Server running on http://localhost:${config.port}/graphql`);
 });
 
 
