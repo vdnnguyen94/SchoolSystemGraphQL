@@ -1,63 +1,69 @@
-/*const express = require("express");
-const path = require("path");
-const app = express();
-const assetsRouter = require("./server/assets-router");
-app.use("/src", assetsRouter);
-app.use("/", express.static(path.join(__dirname, "public")));
-app.get("/api/v1", (req, res) => {
-  res.json({
-    project: "React and Express Boilerplate",
-    from: "Vanaldito",
+import config from './config/config.js';
+import mongoose from 'mongoose';
+import express from 'express';
+import cors from 'cors';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import schema from './graphql/schema.js'; // Schema will be created next
+
+// Connect to MongoDB
+mongoose.Promise = global.Promise;
+mongoose.connect(config.mongoUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: 'SchoolSystem'
+})
+  .then(() => {
+    console.log("✅ Connected to MongoDB:", config.mongoUri);
+  })
+  .catch(err => {
+    console.error("❌ MongoDB connection error:", err);
   });
-});
-app.get("/*", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-})
-const { PORT = 5000 } = process.env;
-app.listen(PORT, () => {
-  console.log();
-  console.log(`  App running in port ${PORT}`);
-  console.log();
-  console.log(`  > Local: \x1b[36mhttp://localhost:\x1b[1m${PORT}/\x1b[0m`);
-});*/
-
-/*import config from './config/config.js' 
-import app from './server/express.js'
-app.get("/", (req, res) => {
-res.json({ message: "Welcome to User application." });
-});
-app.listen(config.port, (err) => { 
-if (err) {
-console.log(err) 
-}
-console.info('Server started on port %s.', config.port) 
-})*/
-
-import config from './config/config.js' 
-import app from './server/express.js'
-import mongoose from 'mongoose' 
-mongoose.Promise = global.Promise
-mongoose.connect(config.mongoUri, { useNewUrlParser: true,
-//useCreateIndex: true, 
-useUnifiedTopology: true,
-dbName: 'SchoolSystem' } )
-
- .then(() => {
-console.log("Connected to the database!");
-console.log(config.mongoUri);
-})
 
 mongoose.connection.on('error', () => {
-throw new Error(`unable to connect to database: ${config.mongoUri}`) 
-})
-/*
-app.get("/", (req, res) => {
-res.json({ message: "Welcome to User application." });
+  throw new Error(`Unable to connect to database: ${config.mongoUri}`);
 });
-*/
-app.listen(config.port, (err) => { 
-if (err) {
-console.log(err) 
-}
-console.info('Server started on port %s.', config.port) 
-})
+
+// Initialize Express App
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// Start Apollo Server
+const server = new ApolloServer({ schema });
+await server.start();
+
+// Apply Apollo GraphQL middleware
+app.use('/graphql', expressMiddleware(server));
+
+// Start Express Server
+app.listen(config.port, () => {
+  console.info(`🚀 Server running on http://localhost:${config.port}/graphql`);
+});
+
+
+
+// import config from './config/config.js' 
+// import app from './server/express.js'
+// import mongoose from 'mongoose' 
+// mongoose.Promise = global.Promise
+// mongoose.connect(config.mongoUri, { useNewUrlParser: true,
+// //useCreateIndex: true, 
+// useUnifiedTopology: true,
+// dbName: 'SchoolSystem' } )
+
+//  .then(() => {
+// console.log("Connected to the database!");
+// console.log(config.mongoUri);
+// })
+
+// mongoose.connection.on('error', () => {
+// throw new Error(`unable to connect to database: ${config.mongoUri}`) 
+// })
+
+// app.listen(config.port, (err) => { 
+// if (err) {
+// console.log(err) 
+// }
+// console.info('Server started on port %s.', config.port) 
+// })
