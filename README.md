@@ -45,7 +45,7 @@ This powerful tool empowers you to extract valuable data, facilitating informed 
 # <span style="color:red">START APPLICATION</span>
 
 ## Clone my Repo
-git clone https://github.com/vdnnguyen94/SchoolSystem.git .
+git clone https://github.com/vdnnguyen94/SchoolSystemGraphQL.git .
 
 
 ## Building Client React Application
