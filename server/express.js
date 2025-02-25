@@ -7,10 +7,7 @@ import helmet from 'helmet'
 import Template from './../template.js'
 import studentRoutes from './routes/student.routes.js'
 import courseRoutes from './routes/course.routes.js'
-import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.js'
-import surveyRoutes from './routes/survey.routes.js'
-import questionRoutes from './routes/question.routes.js'
 //import devBundle from './devBundle' 
 import path from 'path'
 import { fileURLToPath } from 'url';
@@ -23,46 +20,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-// Set the view engine to EJS
+
 app.set('view engine', 'ejs');
 
-// Set the views directory
+
 app.set('views', path.join(__dirname, 'views'));
 
-//devBundle.compile(app)
-
-//...
-/*
-app.get('/', (req, res) => {
-res.status(200).send(Template()) 
-})
-*/
-//...
 app.use(express.static(path.join(CURRENT_WORKING_DIR, 'dist/app')));
-//app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, '../dist/app')))
-// Serve app production bundle
-/*
-app.use(express.static(path.join(CURRENT_WORKING_DIR, "..", "dist/app")));
-app.use((req, res, next) => {
-    res.sendFile(path.join(CURRENT_WORKING_DIR,"dist/app", "index.html"));
-  });
-*/
-//app.use(express.static('../dist/app'));
-/*
-// Handle client routing, return all requests to the app
-app.get('*', (_req, res) => {
-  res.sendFile(path.join(CURRENT_WORKING_DIR, '/dist/app/index.html'));
-});
-*/
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/', userRoutes)
 app.use('/', authRoutes)
-app.use('/', surveyRoutes)
-app.use('/', questionRoutes)
 app.use('/', studentRoutes)
 app.use('/', courseRoutes)
-app.use('/', userRoutes)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
