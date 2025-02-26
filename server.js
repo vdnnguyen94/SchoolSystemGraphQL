@@ -1,6 +1,6 @@
 import config from './config/config.js';
 import mongoose from 'mongoose';
-import express from 'express';
+import configureExpress from './server/express.js';
 import cors from 'cors';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
@@ -22,22 +22,29 @@ mongoose.connection.on('error', () => {
 });
 
 // Initialize Express App
-const app = express();
-app.use(cors());
-app.use(express.json());
+const app = configureExpress();
 
-// JWT Middleware - Protect GraphQL API
-app.use(
-  expressjwt({
-    secret: config.jwtSecret,
-    algorithms: ["HS256"],
-    credentialsRequired: false // Allow unauthenticated users
-  })
-);
+
+// Add a middleware for checking JWT and making user info available in the context
+app.use((req, res, next) => {
+  const token = req.cookies.token;
+  if (token) {
+    try {
+      req.user = jwt.verify(token, config.jwtSecret);
+    } catch (e) {
+      req.user = null; // Invalid token
+    }
+  }
+  next();
+});
 
 
 // Start Apollo Server
-const server = new ApolloServer({ schema });
+const server = new ApolloServer({
+  schema, 
+  introspection: true, 
+  context: ({ req }) => ({ user: req.user }) // Pass user info to GraphQL context
+});
 await server.start();
 
 // Apply Apollo GraphQL middleware

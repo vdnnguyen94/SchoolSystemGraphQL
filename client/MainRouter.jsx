@@ -10,6 +10,7 @@ import MyCourses from './courses/MyCourses.jsx'
 import AllCourses from './courses/AllCourses.jsx';
 import CourseDetails from './courses/CourseDetails.jsx';
 import ChangeSection from './courses/ChangeSection.jsx'
+import CreateCourse from './courses/CreateCourse.jsx';
 //import StudentSignUp from './student/StudentSignup.jsx';
 import Students from './student/Students.jsx';
 import StudentDetail from './student/StudentDetail.jsx';
