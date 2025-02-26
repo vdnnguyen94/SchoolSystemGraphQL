@@ -54,7 +54,6 @@ app.use(
     origin: 'http://localhost:5173', // Allow requests from this origin
     credentials: true, // Allow cookies to be sent
   }),
-  express.json(),
   expressMiddleware(server)
 );
 

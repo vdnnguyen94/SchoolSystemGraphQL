@@ -1,88 +1,119 @@
-import React from 'react';
-import { useQuery, gql } from '@apollo/client';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Card, CardContent, Typography, TextField, Button } from '@material-ui/core';
+import { createCourse } from '../courses/api-course';
+import auth from '../lib/auth-helper';
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    width: '70%',
+    width: '50%',
     margin: '0 auto',
     marginTop: theme.spacing(3),
     padding: theme.spacing(2),
     textAlign: 'center',
   },
-  title: {
-    fontSize: 18,
+  formField: {
     marginBottom: theme.spacing(2),
-  },
-  courseCard: {
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-    border: '1px solid #ccc',
+    width: '100%',
   },
   button: {
-    margin: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
 }));
 
-// GraphQL Query to Fetch All Courses
-const GET_COURSES = gql`
-  query GetCourses {
-    courses {
-      _id
-      courseCode
-      courseName
-      section
-      semester
-    }
-  }
-`;
-
-const AllCourses = () => {
+const CreateCourse = () => {
   const classes = useStyles();
+  const [values, setValues] = useState({
+    courseCode: '',
+    courseName: '',
+    semester: '',
+    section: '',
+    error: '',
+    success: '',
+  });
 
-  // Use Apollo's `useQuery` Hook
-  const { loading, error, data } = useQuery(GET_COURSES);
+  const jwt = auth.isAuthenticated();
 
-  if (loading) return <Typography>Loading courses...</Typography>;
-  if (error) return <Typography style={{ color: 'red', fontWeight: 'bold' }}>Error: {error.message}</Typography>;
+  const handleChange = (name) => (event) => {
+    setValues({ ...values, [name]: event.target.value });
+  };
 
-  const courses = data?.courses || [];
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const course = {
+      courseCode: values.courseCode,
+      courseName: values.courseName,
+      semester: values.semester,
+      section: values.section,
+    };
+
+    createCourse(course, { t: jwt.token }).then((data) => {
+      if (data.error) {
+        setValues({ ...values, success: '', error: data.error });
+      } else {
+        setValues({
+          courseCode: '',
+          courseName: '',
+          semester: '',
+          section: '',
+          error: '',
+          success: 'Course created successfully!',
+        });
+      }
+    });
+  };
 
   return (
     <div>
       <Card className={classes.card}>
         <CardContent>
-          <Typography variant="h6" className={classes.title}>
-            All Available Courses
-          </Typography>
+          <Typography variant="h6">Create a New Course</Typography>
 
-          {courses.length === 0 ? (
-            <Typography>No courses found.</Typography>
-          ) : (
-            courses.map((course) => (
-              <Card key={course._id} className={classes.courseCard}>
-                <Typography variant="h6">{course.courseName} ({course.courseCode})</Typography>
-                <Typography>Semester: {course.semester} | Section: {course.section}</Typography>
+          {values.error && <Typography style={{ color: 'red' }}>{values.error}</Typography>}
+          {values.success && <Typography style={{ color: 'green' }}>{values.success}</Typography>}
 
-                {/* View Course Details Button */}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.button}
-                  component={Link}
-                  to={`/course/${course._id}`}
-                >
-                  View Course Details
-                </Button>
-              </Card>
-            ))
-          )}
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Course Code"
+              variant="outlined"
+              className={classes.formField}
+              value={values.courseCode}
+              onChange={handleChange('courseCode')}
+              required
+            />
+            <TextField
+              label="Course Name"
+              variant="outlined"
+              className={classes.formField}
+              value={values.courseName}
+              onChange={handleChange('courseName')}
+              required
+            />
+            <TextField
+              label="Semester"
+              variant="outlined"
+              className={classes.formField}
+              value={values.semester}
+              onChange={handleChange('semester')}
+              required
+            />
+            <TextField
+              label="Section"
+              type="number"
+              variant="outlined"
+              className={classes.formField}
+              value={values.section}
+              onChange={handleChange('section')}
+              required
+            />
+            <Button type="submit" variant="contained" color="primary" className={classes.button}>
+              Create Course
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </div>
   );
 };
 
-export default AllCourses;
+export default CreateCourse;
