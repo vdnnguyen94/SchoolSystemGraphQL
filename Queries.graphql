@@ -28,3 +28,142 @@
   }
   
 }
+
+# Get a specific student with student number
+  student(studentNumber: "123") {
+    studentNumber
+    firstName
+    lastName
+    email
+    courses {
+      courseName
+      section
+      semester
+    }
+  }
+}
+ 
+{
+  # Get all courses
+  courses {
+    courseCode
+    courseName
+    section
+    semester
+  }
+ 
+  # Get all courses with students
+  courses {
+    courseCode
+    courseName
+    section
+    semester
+    students {
+      studentNumber
+      firstName
+      lastName
+    }
+  }
+ 
+  # Get a specific course with id
+  course(id: "651b8c3f9d1e2c4a8c1b2d3e") {
+    courseCode
+    courseName
+    section
+    semester
+    students {
+      studentNumber
+      firstName
+      lastName
+    }
+  }
+}
+ 
+# Mutation
+{
+  # Create student
+  createStudent(
+    studentNumber: "123"
+    firstName: "John"
+    lastName: "Doe"
+    email: "john.doe@example.com"
+    password: "qwe123"
+    address: "123 Main St"
+    city: "Toronto"
+    phoneNumber: "123-456-7890"
+    program: "Computer Science"
+    hobbies: "Reading"
+    techSkills: "JavaScript"
+  ) {
+    studentNumber
+    firstName
+    lastName
+    email
+  }
+ 
+  # Update student
+  updateStudent(
+    studentNumber: "123"
+    firstName: "Jane"
+    lastName: "Doe"
+    email: "jane.doe@example.com"
+  ) {
+    studentNumber
+    firstName
+    lastName
+    email
+  }
+ 
+  # Delete student
+  deleteStudent(studentNumber: "123") {
+    studentNumber
+    firstName
+    lastName
+  }
+ 
+  # Register a student to a course
+  registerStudentToCourse(
+    studentNumber: "123"
+    courseId: "651b8c3f9d1e2c4a8c1b2d3e"
+  ) {
+    courseName
+    section
+    semester
+    students {
+      studentNumber
+      firstName
+      lastName
+    }
+  }
+ 
+  # Drop a student from a course
+  dropStudentFromCourse(
+    studentNumber: "123"
+    courseId: "651b8c3f9d1e2c4a8c1b2d3e"
+  ) {
+    courseName
+    section
+    semester
+    students {
+      studentNumber
+      firstName
+      lastName
+    }
+  }
+ 
+  # Change a student's course section
+  changeStudentSection(
+    studentNumber: "123"
+    oldCourseId: "651b8c3f9d1e2c4a8c1b2d3e"
+    newCourseId: "651b8c3f9d1e2c4a8c1b2d3f"
+  ) {
+    courseName
+    section
+    semester
+    students {
+      studentNumber
+      firstName
+      lastName
+    }
+  }
+}
