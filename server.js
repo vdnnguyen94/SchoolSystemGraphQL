@@ -48,7 +48,15 @@ const server = new ApolloServer({
 await server.start();
 
 // Apply Apollo GraphQL middleware
-app.use('/graphql', expressMiddleware(server));
+app.use(
+  '/graphql',
+  cors({
+    origin: 'http://localhost:5173', // Allow requests from this origin
+    credentials: true, // Allow cookies to be sent
+  }),
+  express.json(),
+  expressMiddleware(server)
+);
 
 // Start Express Server
 app.listen(config.port, () => {
