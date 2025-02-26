@@ -41,6 +41,10 @@ export default defineConfig({
         target: `http://localhost:${PORT}`,
         changeOrigin: true,
       },
+      '/graphql': {
+        target: `http://localhost:${PORT}`,
+        changeOrigin: true,
+      },
      
     },
   },
