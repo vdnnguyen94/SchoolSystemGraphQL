@@ -13,6 +13,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../../config/config.js";
  
+const jwtExpirySeconds = 86400; 
+
 // Student Type
 const StudentType = new GraphQLObjectType({
   name: "Student",
@@ -95,6 +97,19 @@ const Query = new GraphQLObjectType({
         return await Student.findOne({ studentNumber });
       },
     },
+    // Check if login
+    isLoggedIn: {
+      type: GraphQLBoolean,
+      resolve: (root, args, context) => {
+        return !!context.user; //No need to check if token
+      },
+    },
+    isAdmin: {
+      type: GraphQLBoolean,
+      resolve: (root, args, context) => {
+        return context.user?.isAdmin || false; 
+      },
+    },
     // Get all courses
     courses: {
       type: new GraphQLList(CourseType),
@@ -156,14 +171,69 @@ const Mutation = new GraphQLObjectType({
         program: { type: GraphQLString },
         hobbies: { type: GraphQLString },
         techSkills: { type: GraphQLString },
+        isAdmin: { type: GraphQLBoolean }, 
       },
       resolve: async (_, args) => {
-        const hashedPassword = bcrypt.hashSync(args.password, 10);
         const student = new Student({
-          ...args,
-          hashed_password: hashedPassword,
+          studentNumber: args.studentNumber,
+          firstName: args.firstName,
+          lastName: args.lastName,
+          email: args.email,
+          address: args.address,
+          city: args.city,
+          phoneNumber: args.phoneNumber,
+          program: args.program,
+          hobbies: args.hobbies,
+          techSkills: args.techSkills,
+          isAdmin: args.isAdmin === true ? true : undefined,
         });
+    
+        student.password = args.password;
+    
         return await student.save();
+      }
+    },
+    logIn: {
+      type: GraphQLBoolean,
+      args: {
+        studentNumber: { type: new GraphQLNonNull(GraphQLString) },
+        password: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (_, { studentNumber, password }, context) => {
+        const student = await Student.findOne({ studentNumber });
+        if (!student) {
+          throw new Error("Student not found");
+        }
+
+        if (!student.authenticate(password)) {
+          throw new Error("Invalid password");
+        }
+        console.log("Debug: context.res is", context.res);
+        console.log(`Signing IN ${studentNumber} with ${password}`);
+        const token = jwt.sign(
+          { _id: student._id, isAdmin: student.isAdmin || false }, 
+          config.jwtSecret,
+          { algorithm: 'HS256', expiresIn: jwtExpirySeconds }
+        );
+        console.log('Generated token:', token);
+        // Store token in an HTTP-only cookie
+        if (!context.res) {
+          throw new Error("Response object is missing in context");
+        }
+        context.res.cookie("token", token, {
+          maxAge: jwtExpirySeconds, // 24 hours
+          httpOnly: true
+        });
+        console.log("COOKIE SET");
+        return true;
+      },
+    },
+
+    logOut: {
+      type: GraphQLString,
+      resolve: (parent, args, context) => {
+        context.res.clearCookie("token"); // ✅ Clears authentication cookie
+        return "Logged out successfully!";
       },
     },
     // Update a student's details

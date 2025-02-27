@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 const server = new ApolloServer({
   schema, 
   introspection: true, 
-  context: ({ req }) => ({ user: req.user }) // Pass user info to GraphQL context
+  context: ({ req, res }) => ({ req, res, user: req.user  }) // Pass user info to GraphQL context
 });
 await server.start();
 
@@ -54,7 +54,9 @@ app.use(
     origin: 'http://localhost:5173', // Allow requests from this origin
     credentials: true, // Allow cookies to be sent
   }),
-  expressMiddleware(server)
+  expressMiddleware(server, { 
+    context: async ({ req, res }) => ({ req, res, user: req.user || null })
+  })
 );
 
 // Start Express Server

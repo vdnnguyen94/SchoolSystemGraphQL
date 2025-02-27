@@ -1,9 +1,24 @@
 {
   students {
     studentNumber
+    id
     firstName
     lastName
     email
+    address
+    city   
+    hobbies
+    phoneNumber
+    program
+    techSkills
+    isAdmin
+    courses {
+      id
+      courseCode
+      courseName
+      section
+      semester
+    }
   }
 }
 
@@ -30,6 +45,7 @@
 }
 
 # Get a specific student with student number
+{
   student(studentNumber: "123") {
     studentNumber
     firstName
