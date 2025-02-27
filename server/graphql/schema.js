@@ -144,7 +144,11 @@ const Query = new GraphQLObjectType({
         if (!context.user) {
           throw new Error("Authentication required");
         }
+
         const student = await Student.findOne({ studentNumber });
+        if (!(context.user._id === student._id.toString() || context.user.isAdmin)) {
+          throw new Error("Unauthorized: View your own courses unless you are an admin");
+        }
         if (!student) throw new Error("Student not found");
         return await Course.find({ students: student._id }).populate(
           "students"
