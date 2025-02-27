@@ -46,7 +46,11 @@ export default function Menu() {
   
   //log out mutation
   const [logOut] = useMutation(LOGOUT, {
-    onCompleted: () => navigate("/"),
+    onCompleted: async () => {
+      await refetch();
+      navigate("/");
+    },
+
   });
   const isAuthenticated = loggedInData?.isLoggedIn?.isLoggedIn || false;
   const studentNumber = loggedInData?.isLoggedIn?.studentNumber || null;

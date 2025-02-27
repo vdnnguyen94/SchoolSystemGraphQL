@@ -7,16 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import toonieLogo from './../assets/images/toonieLogo.png';
 import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
-import { useQuery, useMutation, gql } from "@apollo/client";
-
-const IS_LOGGED_IN = gql`
-  query {
-    isLoggedIn{
-      isLoggedIn
-      studentNumber
-    }
-  }
-`;
+import auth from '../lib/auth-helper';
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -42,12 +33,19 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = ({ isUserSignedOut }) => {
   const classes = useStyles();
+  const [isLoggedIn, setIsLoggedIn] = useState(auth.isAuthenticated());
 
-  const { data, loading, error } = useQuery(IS_LOGGED_IN);
-  const isLoggedIn = data?.isLoggedIn?.isLoggedIn || false;
+  useEffect(() => {
+    // Update the authentication status when isUserSignedOut changes
+    setIsLoggedIn(auth.isAuthenticated());
+  }, [isUserSignedOut]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading authentication status</p>;
+  const handleSignOut = () => {
+    auth.clearJWT(() => {
+      // Update the authentication status after sign-out
+      setIsLoggedIn(false);
+    });
+  };
 
   return (
     <Card className={classes.card}>
