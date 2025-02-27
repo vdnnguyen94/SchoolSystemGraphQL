@@ -23,7 +23,11 @@ mongoose.connection.on('error', () => {
 
 // Initialize Express App
 const app = configureExpress();
-
+const corsOptions = {
+  origin: ["http://localhost:5173"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
 // Add a middleware for checking JWT and making user info available in the context
 app.use((req, res, next) => {
@@ -58,9 +62,10 @@ await server.start();
 app.use(
   '/graphql',
   cors({
-    origin: 'http://localhost:5173', // Allow requests from this origin
-    credentials: true, // Allow cookies to be sent
+    origin: ['http://localhost:5173', 'http://www.localhost:5173'], // Allow both variations
+    credentials: true,
   }),
+
   expressMiddleware(server, { 
     context: async ({ req, res }) => ({ req, res, user: req.user || null })
   })

@@ -11,21 +11,7 @@ import auth from './auth-helper.js'
 import {Navigate, Link} from 'react-router-dom'
 import { useLocation } from 'react-router-dom';
 import {signin} from './api-auth.js'
-import { useMutation, gql, useQuery } from "@apollo/client";
 
-const LOGIN_MUTATION = gql`
-  mutation LogIn($studentNumber: String!, $password: String!) {
-    logIn(studentNumber: $studentNumber, password: $password)
-  }
-`;
-const IS_LOGGED_IN = gql`
-  query {
-    isLoggedIn{
-      isLoggedIn
-      studentNumber
-    }
-  }
-`;
 const useStyles = makeStyles(theme => ({
   card: {
     maxWidth: 600,
@@ -70,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Signin(props) {
   const location = useLocation();
-  //console.log(location.state)
+  console.log(location.state)
   const classes = useStyles()
   const [values, setValues] = useState({
       studentNumber: '',
@@ -78,54 +64,36 @@ export default function Signin(props) {
       error: '',
       redirectToReferrer: false
   })
-  //Mutation
-  const { refetch } = useQuery(IS_LOGGED_IN);
-  const [logIn, { loading, error }] = useMutation(LOGIN_MUTATION, {
-    refetchQueries: [{ query: IS_LOGGED_IN }],
-    onCompleted: async (data) => {
-      console.log("Login successful:", data);
-      if (data.logIn) {
-        await refetch();
-        setValues({ ...values, redirectToReferrer: true });
-      } else {
-        setValues({ ...values, error: "Invalid credentials" });
-      }
-    },
-    onError: (error) => {
-      console.error("Login error:", error);
-      setValues({ ...values, error: "Login failed. Try again." });
-    },
-  });
 
   const clickSubmit = () => {
-    if (!values.studentNumber || !values.password) {
-      setValues({ ...values, error: "All fields are required" });
-      return;
+    const student = {
+      studentNumber: values.studentNumber || undefined,
+      password: values.password || undefined
     }
-    console.log(`Login Credentials ${values.studentNumber} and ${values.password}`);
-    console.log(`Login Credentials:`, values.studentNumber, typeof values.studentNumber);
-    console.log(`Password Type:`, typeof values.password);
-    logIn({ variables: { studentNumber: values.studentNumber, password: values.password } });
+    console.log(student)
+    signin(student).then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error})
+      } else {
+        console.log(data)
+        auth.authenticate(data, () => {
+          setValues({ ...values, error: '',redirectToReferrer: true})
+        })
+      }
+    })
   };
-
   const handleDemoLogin = (studentNumber, password) => {
     setValues({ studentNumber, password, error: '' });
-  
-    logIn({ variables: { studentNumber, password } })
-      .then(({ data }) => {
-        console.log("Demo login successful:", data);
-        if (data.logIn) {
-          setValues({ ...values, redirectToReferrer: true });
-        } else {
-          setValues({ ...values, error: "Invalid demo credentials" });
-        }
-      })
-      .catch((error) => {
-        console.error("Demo login error:", error);
-        setValues({ ...values, error: "Demo login failed. Try again." });
-      });
+    signin({ studentNumber, password }).then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        auth.authenticate(data, () => {
+          setValues({ ...values, error: '', redirectToReferrer: true });
+        });
+      }
+    });
   };
-  
 
 
   const handleChange = name => event => {
@@ -159,9 +127,7 @@ export default function Signin(props) {
           }
         </CardContent>
         <CardActions>
-          <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>
-              {loading ? "Logging in..." : "LOG IN"}
-          </Button>
+          <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>LOG IN</Button>
           
         </CardActions>
 

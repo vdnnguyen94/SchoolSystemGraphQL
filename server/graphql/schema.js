@@ -99,11 +99,19 @@ const Query = new GraphQLObjectType({
     },
     // Check if login
     isLoggedIn: {
-      type: GraphQLBoolean,
+      type: new GraphQLObjectType({
+        name: "AuthStatus",
+        fields: {
+          isLoggedIn: { type: GraphQLBoolean },
+          studentNumber: { type: GraphQLString }
+        }
+      }),
       resolve: (root, args, context) => {
-        //console.log("Cookie Token: ", context.req.cookies);
         console.log("Debug: context.user is", context.user);
-        return !!context.user; //No need to check if token
+        return {
+          isLoggedIn: !!context.user,
+          studentNumber: context.user ? context.user.studentNumber : null
+        };
       },
     },
     isAdmin: {
@@ -222,7 +230,7 @@ const Mutation = new GraphQLObjectType({
         console.log(`Signing IN ${studentNumber} with ${password}`);
         //console.log(`config jwtSecret ${config.jwtSecret}`);
         const token = jwt.sign(
-          { _id: student._id, isAdmin: student.isAdmin || false }, 
+          { _id: student._id, studentNumber: student.studentNumber, isAdmin: student.isAdmin || false }, 
           config.jwtSecret,
           { algorithm: 'HS256', expiresIn: jwtExpirySeconds }
         );

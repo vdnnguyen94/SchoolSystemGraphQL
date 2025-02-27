@@ -1,34 +1,13 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import Button from '@material-ui/core/Button';
-//import auth from '../lib/auth-helper';
+import auth from '../lib/auth-helper';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useQuery, useMutation, gql } from "@apollo/client";
 
-const IS_LOGGED_IN = gql`
-  query {
-    isLoggedIn{
-      isLoggedIn
-      studentNumber
-    }
-  }
-`;
-
-const IS_ADMIN = gql`
-  query {
-    isAdmin
-  }
-`;
-
-const LOGOUT = gql`
-  mutation {
-    logOut
-  }
-`;
 const isActive = (location, path) => {
   return location.pathname === path ? { color: '#ff4081' } : { color: '#ffffff' };
 };
@@ -37,22 +16,10 @@ export default function Menu() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data: loggedInData, loading: loadingAuth, refetch } = useQuery(IS_LOGGED_IN);
-  const { data: adminData } = useQuery(IS_ADMIN);
+  const isAuthenticated = auth.isAuthenticated();
+  const student = isAuthenticated ? isAuthenticated.student : null;
+  const isAdmin = student?.isAdmin || false;
 
-  useEffect(() => {
-    refetch();  // 
-  }, [location.pathname, refetch]);
-  
-  //log out mutation
-  const [logOut] = useMutation(LOGOUT, {
-    onCompleted: () => navigate("/"),
-  });
-  const isAuthenticated = loggedInData?.isLoggedIn?.isLoggedIn || false;
-  const studentNumber = loggedInData?.isLoggedIn?.studentNumber || null;
-  const isAdmin = adminData?.isAdmin || false;
-  console.log("🔹 isAuthenticated:", isAuthenticated);
-  console.log("🔹 isAdmin:", isAdmin);
   return (
     <AppBar position="static">
       <Toolbar>
@@ -68,7 +35,7 @@ export default function Menu() {
         </Link>
 
         {/* If Not Logged In - Show Signup & Sign In */}
-        {!loadingAuth && !isAuthenticated && (
+        {!isAuthenticated && (
           <span>
             <Link to="/signup">
               <Button style={isActive(location, "/signup")}>Sign up</Button>
@@ -80,7 +47,7 @@ export default function Menu() {
         )}
 
         {/* If Logged In - Show Account, Courses */}
-        {!loadingAuth && isAuthenticated && (
+        {isAuthenticated && (
           <span>
             {/* My Account */}
             <Link to="/myAccount">
@@ -90,12 +57,12 @@ export default function Menu() {
             {/* Show "My Courses" and "Register Course" ONLY if NOT an Admin */}
             {!isAdmin && (
               <>
-                <Link to={`/mycourses/${studentNumber}`}>
-                  <Button style={isActive(location, `/mycourses/${studentNumber}`)}>My Courses</Button>
+                <Link to={`/mycourses/${student.studentNumber}`}>
+                  <Button style={isActive(location, `/mycourses/${student.studentNumber}`)}>My Courses</Button>
                 </Link>
 
-                <Link to={`/student/${studentNumber}/register`}>
-                  <Button style={isActive(location, `/student/${studentNumber}/register`)}>Register Course</Button>
+                <Link to={`/student/${student.studentNumber}/register`}>
+                  <Button style={isActive(location, `/student/${student.studentNumber}/register`)}>Register Course</Button>
                 </Link>
               </>
             )}
@@ -124,12 +91,14 @@ export default function Menu() {
         )}
 
         {/* Right-Side Section (Logout) */}
-        {!loadingAuth && isAuthenticated && (
+        {isAuthenticated && (
           <div style={{ marginLeft: 'auto' }}>
             <span>
               <Button
                 color="inherit"
-                onClick={() => logOut()}
+                onClick={() => {
+                  auth.clearJWT(() => navigate('/'));
+                }}
               >
                 Sign out
               </Button>
