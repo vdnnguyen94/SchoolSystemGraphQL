@@ -1,33 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import { listStudents } from './api-student';
+import { useState, useEffect } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { Card, CardContent, Typography, Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { GET_STUDENTS } from "./queries";
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    width: '60%',
-    margin: '0 auto',
+    width: "60%",
+    margin: "0 auto",
     marginTop: theme.spacing(3),
     padding: theme.spacing(2),
-    textAlign: 'center',
+    textAlign: "center",
   },
   studentList: {
-    listStyleType: 'none',
+    listStyleType: "none",
     padding: 0,
     marginTop: theme.spacing(2),
   },
   studentItem: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: theme.spacing(1),
-    borderBottom: '1px solid #ccc',
+    borderBottom: "1px solid #ccc",
   },
   button: {
     marginLeft: theme.spacing(2),
-    textTransform: 'none', // Keep text readable
-    fontSize: '0.9rem',
+    textTransform: "none", // Keep text readable
+    fontSize: "0.9rem",
     padding: theme.spacing(1, 2),
   },
 }));
@@ -35,35 +36,46 @@ const useStyles = makeStyles((theme) => ({
 const Students = () => {
   const classes = useStyles();
   const [students, setStudents] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   // Fetch all students
+  const { loading, error, data } = useQuery(GET_STUDENTS);
+
   useEffect(() => {
-    listStudents().then((data) => {
-      if (data.error) {
-        setMessage(`Error: ${data.error}`);
-      } else {
-        setStudents(data);
-      }
-    });
-  }, []);
+    if (error) {
+      setMessage(`Error: ${error.message}`);
+    } else if (data && data.students) {
+      setStudents(data.students);
+    }
+  }, [data, error]);
+
+  if (loading) return <Typography>Loading students...</Typography>;
+  if (error)
+    return (
+      <Typography style={{ color: "red", fontWeight: "bold" }}>
+        {message}
+      </Typography>
+    );
 
   return (
     <div>
       <Card className={classes.card}>
         <CardContent>
           <Typography variant="h6">All Students</Typography>
-
-          {message && <Typography style={{ color: 'red', fontWeight: 'bold' }}>{message}</Typography>}
-
+          {message && (
+            <Typography style={{ color: "red", fontWeight: "bold" }}>
+              {message}
+            </Typography>
+          )}
           <ul className={classes.studentList}>
             {students.length === 0 ? (
               <Typography>No students found.</Typography>
             ) : (
               students.map((student) => (
-                <li key={student._id} className={classes.studentItem}>
+                <li key={student.id} className={classes.studentItem}>
                   <Typography>
-                    {student.firstName} {student.lastName} - {student.studentNumber}
+                    {student.firstName} {student.lastName} -{" "}
+                    {student.studentNumber}
                   </Typography>
                   <Button
                     variant="contained"

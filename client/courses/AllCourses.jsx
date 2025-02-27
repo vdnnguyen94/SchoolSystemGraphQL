@@ -1,16 +1,16 @@
-import React from 'react';
-import { useQuery, gql } from '@apollo/client';
-import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Button } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { makeStyles } from "@material-ui/core/styles";
+import { Card, CardContent, Typography, Button } from "@material-ui/core";
+import { useQuery } from "@apollo/client";
+import { Link } from "react-router-dom";
+import { GET_ALL_COURSES } from "./queries";
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    width: '70%',
-    margin: '0 auto',
+    width: "70%",
+    margin: "0 auto",
     marginTop: theme.spacing(3),
     padding: theme.spacing(2),
-    textAlign: 'center',
+    textAlign: "center",
   },
   title: {
     fontSize: 18,
@@ -19,36 +19,21 @@ const useStyles = makeStyles((theme) => ({
   courseCard: {
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
-    border: '1px solid #ccc',
+    border: "1px solid #ccc",
   },
   button: {
     margin: theme.spacing(1),
   },
 }));
 
-// GraphQL Query to Fetch All Courses
-const GET_COURSES = gql`
-  query GetCourses {
-    courses {
-      id
-      courseCode
-      courseName
-      section
-      semester
-    }
-  }
-`;
-
 const AllCourses = () => {
   const classes = useStyles();
+  const { loading, error, data } = useQuery(GET_ALL_COURSES);
 
-  // Use Apollo's `useQuery` Hook
-  const { loading, error, data } = useQuery(GET_COURSES);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-  if (loading) return <Typography>Loading courses...</Typography>;
-  if (error) return <Typography style={{ color: 'red', fontWeight: 'bold' }}>Error: {error.message}</Typography>;
-
-  const courses = data?.courses || [];
+  const courses = data.courses || [];
 
   return (
     <div>
@@ -62,9 +47,13 @@ const AllCourses = () => {
             <Typography>No courses found.</Typography>
           ) : (
             courses.map((course) => (
-              <Card key={course._id} className={classes.courseCard}>
-                <Typography variant="h6">{course.courseName} ({course.courseCode})</Typography>
-                <Typography>Semester: {course.semester} | Section: {course.section}</Typography>
+              <Card key={course.id} className={classes.courseCard}>
+                <Typography variant="h6">
+                  {course.courseName} ({course.courseCode})
+                </Typography>
+                <Typography>
+                  Semester: {course.semester} | Section: {course.section}
+                </Typography>
 
                 {/* View Course Details Button */}
                 <Button

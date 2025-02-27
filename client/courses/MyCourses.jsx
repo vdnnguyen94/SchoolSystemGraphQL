@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardContent, Typography, Button } from '@material-ui/core';
-import { useParams, useNavigate } from 'react-router-dom';
-import auth from '../lib/auth-helper';
-import { listCoursesByStudent, dropCourse } from './api-course';
+import { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import { Card, CardContent, Typography, Button } from "@material-ui/core";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from "@apollo/client";
+import { GET_COURSES_BY_STUDENT } from "./queries";
+import { DROP_COURSE } from "./mutations";
+import auth from "../lib/auth-helper";
 
 const useStyles = makeStyles((theme) => ({
   card: {
-    width: '70%',
-    margin: '0 auto',
+    width: "70%",
+    margin: "0 auto",
     marginTop: theme.spacing(3),
     padding: theme.spacing(2),
-    textAlign: 'center',
+    textAlign: "center",
   },
   title: {
     fontSize: 18,
@@ -20,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   courseCard: {
     marginBottom: theme.spacing(2),
     padding: theme.spacing(2),
-    border: '1px solid #ccc',
+    border: "1px solid #ccc",
   },
   button: {
     margin: theme.spacing(1),
@@ -29,43 +31,52 @@ const useStyles = makeStyles((theme) => ({
 
 const MyCourses = () => {
   const classes = useStyles();
-  const { studentNumber } = useParams(); 
-  const [courses, setCourses] = useState([]); // Ensure courses is always an array
-  const [message, setMessage] = useState('');
+  const { studentNumber } = useParams();
+  const [message, setMessage] = useState("");
   const jwt = auth.isAuthenticated();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
+  const { loading, error, data, refetch } = useQuery(GET_COURSES_BY_STUDENT, {
+    variables: { studentNumber },
+  });
 
-    listCoursesByStudent({ studentNumber }, signal).then((data) => {
-      if (data.error) {
-        setMessage(`Error: ${data.error}`);
-        setCourses([]); // Set empty array if there's an error
-      } else if (!data || !Array.isArray(data)) {
-        setMessage('No registered courses found.');
-        setCourses([]); // Ensure it's an empty array
-      } else {
-        setCourses(data);
-      }
-    });
+  const [dropCourseMutation] = useMutation(DROP_COURSE, {
+    onCompleted: () => {
+      setMessage("Course dropped successfully!");
+      // Refetch the courses after dropping a course
+      refetchCourses();
+    },
+    onError: (error) => {
+      setMessage(`Error: ${error.message}`);
+    },
+  });
 
-    return () => abortController.abort();
-  }, [studentNumber]);
+  const refetchCourses = () => {
+    refetch();
+  };
+
+  if (loading) return <Typography>Loading courses...</Typography>;
+  if (error)
+    return (
+      <Typography style={{ color: "red", fontWeight: "bold" }}>
+        Error: {error.message}
+      </Typography>
+    );
+
+  const courses = data?.coursesByStudent || [];
 
   // Handle Drop Course
   const handleDropCourse = (courseId) => {
-    dropCourse({ studentNumber, courseId }, { t: jwt.token }).then((data) => {
-      if (data.error) {
-        setMessage(`Error: ${data.error}`);
-      } else {
-        alert('Course dropped successfully!');
-        // Refresh the course list
-        listCoursesByStudent({ studentNumber }).then((updatedCourses) => {
-          setCourses(updatedCourses || []); // Ensure courses is always an array
-        });
-      }
+    dropCourseMutation({
+      variables: {
+        studentNumber,
+        courseId,
+      },
+      context: {
+        headers: {
+          Authorization: `Bearer ${jwt.token}`,
+        },
+      },
     });
   };
 
@@ -81,26 +92,32 @@ const MyCourses = () => {
           <Typography variant="h6" className={classes.title}>
             Registered Courses for Student {studentNumber}
           </Typography>
-
           {message && (
-            <Typography style={{ color: message.startsWith('Error') ? 'red' : 'green', fontWeight: 'bold' }}>
+            <Typography
+              style={{
+                color: message.startsWith("Error") ? "red" : "green",
+                fontWeight: "bold",
+              }}
+            >
               {message}
             </Typography>
           )}
-
           {courses.length === 0 ? (
             <Typography>Please Register Your Courses</Typography>
           ) : (
             courses.map((course) => (
-              <Card key={course._id} className={classes.courseCard}>
-                <Typography variant="h6">{course.courseName} ({course.courseCode})</Typography>
-                <Typography>Semester: {course.semester} | Section: {course.section}</Typography>
-
+              <Card key={course.id} className={classes.courseCard}>
+                <Typography variant="h6">
+                  {course.courseName} ({course.courseCode})
+                </Typography>
+                <Typography>
+                  Semester: {course.semester} | Section: {course.section}
+                </Typography>
                 <Button
                   variant="contained"
                   color="primary"
                   className={classes.button}
-                  onClick={() => handleChangeSection(course._id)}
+                  onClick={() => handleChangeSection(course.id)}
                 >
                   Change Section
                 </Button>
@@ -108,7 +125,7 @@ const MyCourses = () => {
                   variant="contained"
                   color="secondary"
                   className={classes.button}
-                  onClick={() => handleDropCourse(course._id)}
+                  onClick={() => handleDropCourse(course.id)}
                 >
                   Drop Course
                 </Button>
