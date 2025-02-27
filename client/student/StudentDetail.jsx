@@ -1,31 +1,36 @@
 import { useState, useEffect } from "react";
 //import { useParams } from 'react-router-dom';
-import { useQuery } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import { GET_STUDENT_BY_NUMBER } from "./queries";
 import auth from "../lib/auth-helper";
 
-const StudentDetail = () => {
-  const [student, setStudent] = useState(null);
-  const [message, setMessage] = useState("");
-  const loggedInStudent = auth.isAuthenticated()?.student;
-  const studentNumber = loggedInStudent ? loggedInStudent.studentNumber : null;
+const IS_LOGGED_IN = gql`
+  query {
+    isLoggedIn{
+      isLoggedIn
+      studentNumber
+    }
+  }
+`;
 
+const StudentDetail = () => {
+
+  const { data: loginData, loading: loginLoading, error: loginError } = useQuery(IS_LOGGED_IN);
+  const studentNumber = loginData?.isLoggedIn?.studentNumber || null;
+  console.log(studentNumber);
   // Fetch student details
-  const { loading, error, data } = useQuery(GET_STUDENT_BY_NUMBER, {
-    variables: { studentNumber },
-    skip: !studentNumber, // Skip the query if studentNumber is not available
+  const { data: studentData, loading: studentLoading, error: studentError } = useQuery(GET_STUDENT_BY_NUMBER, {
+    variables: { studentNumber: studentNumber },
+    skip: !studentNumber, 
   });
 
-  useEffect(() => {
-    if (error) {
-      setMessage(`Error: ${error.message}`);
-    } else if (data && data.student) {
-      setStudent(data.student);
-    }
-  }, [data, error]);
+  if (loginLoading) return <p>Checking authentication...</p>;
+  if (loginError || !studentNumber) return <p style={{ color: "red" }}>You must be logged in to view student details.</p>;
 
-  if (loading) return <p>Loading student details...</p>;
-  if (error) return <p style={{ color: "red" }}>{message}</p>;
+  if (studentLoading) return <p>Loading student details...</p>;
+  if (studentError) return <p style={{ color: "red" }}>Error: {studentError.message}</p>;
+
+  const student = studentData?.student;
 
   return (
     <div
@@ -38,7 +43,6 @@ const StudentDetail = () => {
     >
       <div>
         <h2>Student Details</h2>
-        {message && <p style={{ color: "red" }}>{message}</p>}
         {student ? (
           <ul>
             <li>

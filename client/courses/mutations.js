@@ -63,12 +63,12 @@ export const CHANGE_COURSE_SECTION = gql`
   mutation ChangeStudentSection(
     $studentNumber: String!
     $oldCourseId: ID!
-    $newCourseId: ID!
+    $newSection: String!
   ) {
     changeStudentSection(
       studentNumber: $studentNumber
       oldCourseId: $oldCourseId
-      newCourseId: $newCourseId
+      newSection: $newSection
     ) {
       id
       courseCode

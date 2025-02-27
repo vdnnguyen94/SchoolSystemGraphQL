@@ -77,7 +77,7 @@ const ChangeSection = () => {
       variables: {
         studentNumber,
         oldCourseId: courseId,
-        newCourseId: newSection, // Assuming newSection is the ID of the new course
+        newSection, 
       },
     });
   };
