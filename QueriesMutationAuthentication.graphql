@@ -1,0 +1,30 @@
+{
+  students {
+    studentNumber
+    id
+    firstName
+    lastName
+    email
+    address
+    city   
+    hobbies
+    phoneNumber
+    program
+    techSkills
+    isAdmin
+    courses {
+      id
+      courseCode
+      courseName
+      section
+      semester
+    }
+  }
+}
+{
+  isLoggedIn
+}
+{isAdmin}
+mutation{
+  logIn(studentNumber: "10001", password: "qwe123")
+}

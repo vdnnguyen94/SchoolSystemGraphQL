@@ -6,7 +6,7 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { expressjwt } from "express-jwt";
 import schema from './server/graphql/schema.js'; 
-
+import jwt from "jsonwebtoken";
 // Connect to MongoDB
 mongoose.connect(config.mongoUri, { dbName: 'SchoolSystem' })
   .then(() => {
@@ -27,13 +27,20 @@ const app = configureExpress();
 
 // Add a middleware for checking JWT and making user info available in the context
 app.use((req, res, next) => {
-  const token = req.cookies.token;
+  // console.log("Debug: Cookies received:", req.cookies); 
+  // console.log("Debug: Cookies School System:", req.cookies.SchoolSystem); 
+  const token = req.cookies[config.jwtSecret];
   if (token) {
+    // console.log("Secret: ", config.jwtSecret);
     try {
       req.user = jwt.verify(token, config.jwtSecret);
+      // console.log("Debug: Token is valid, user:", req.user);
     } catch (e) {
       req.user = null; // Invalid token
+      //console.log("Debug: Invalid token");
     }
+  }else {
+    //console.log("Debug: No token found in cookies");
   }
   next();
 });

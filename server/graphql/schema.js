@@ -101,6 +101,8 @@ const Query = new GraphQLObjectType({
     isLoggedIn: {
       type: GraphQLBoolean,
       resolve: (root, args, context) => {
+        //console.log("Cookie Token: ", context.req.cookies);
+        console.log("Debug: context.user is", context.user);
         return !!context.user; //No need to check if token
       },
     },
@@ -208,8 +210,9 @@ const Mutation = new GraphQLObjectType({
         if (!student.authenticate(password)) {
           throw new Error("Invalid password");
         }
-        console.log("Debug: context.res is", context.res);
+        //console.log("Debug: context.res is", context.res);
         console.log(`Signing IN ${studentNumber} with ${password}`);
+        //console.log(`config jwtSecret ${config.jwtSecret}`);
         const token = jwt.sign(
           { _id: student._id, isAdmin: student.isAdmin || false }, 
           config.jwtSecret,
@@ -220,11 +223,13 @@ const Mutation = new GraphQLObjectType({
         if (!context.res) {
           throw new Error("Response object is missing in context");
         }
-        context.res.cookie("token", token, {
-          maxAge: jwtExpirySeconds, // 24 hours
-          httpOnly: true
+        context.res.cookie("SchoolSystem", token, {
+          maxAge: 4 * 60 * 60 * 1000, // 24 hours
+          httpOnly: true,
+          path: "/"
         });
         console.log("COOKIE SET");
+        //console.log("Debug: Reading cookie after setting it:", context.req.cookies);
         return true;
       },
     },
@@ -232,7 +237,7 @@ const Mutation = new GraphQLObjectType({
     logOut: {
       type: GraphQLString,
       resolve: (parent, args, context) => {
-        context.res.clearCookie("token"); // ✅ Clears authentication cookie
+        context.res.clearCookie("SchoolSystem"); // ✅ Clears authentication cookie
         return "Logged out successfully!";
       },
     },
