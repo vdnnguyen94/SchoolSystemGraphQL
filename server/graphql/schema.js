@@ -131,7 +131,11 @@ const Query = new GraphQLObjectType({
     coursesByStudent: {
       type: new GraphQLList(CourseType),
       args: { studentNumber: { type: GraphQLString } },
-      resolve: async (_, { studentNumber }) => {
+      resolve: async (_, { studentNumber }, context) => {
+        // Check if user is authenticated
+        if (!context.user) {
+          throw new Error("Authentication required");
+        }
         const student = await Student.findOne({ studentNumber });
         if (!student) throw new Error("Student not found");
         return await Course.find({ students: student._id }).populate(
@@ -142,8 +146,12 @@ const Query = new GraphQLObjectType({
     // Get unregistered courses for a specific student
     unregisteredCourses: {
       type: new GraphQLList(CourseType),
-      args: { studentNumber: { type: GraphQLString } },
-      resolve: async (_, { studentNumber }) => {
+      args: { studentNumber: { type: GraphQLString }},
+      resolve: async (_, { studentNumber }, context) => {
+                // Check if user is authenticated
+        if (!context.user) {
+          throw new Error("Authentication required");
+        }
         const student = await Student.findOne({ studentNumber });
         if (!student) throw new Error("Student not found");
         return await Course.find({ students: { $ne: student._id } }).populate(
@@ -237,10 +245,76 @@ const Mutation = new GraphQLObjectType({
     logOut: {
       type: GraphQLString,
       resolve: (parent, args, context) => {
-        context.res.clearCookie("SchoolSystem"); // ✅ Clears authentication cookie
+        context.res.clearCookie("SchoolSystem"); //  Clears authentication cookie
         return "Logged out successfully!";
       },
     },
+    createCourse: {
+      type: CourseType,
+      args: {
+        courseCode: { type: new GraphQLNonNull(GraphQLString) },
+        courseName: { type: new GraphQLNonNull(GraphQLString) },
+        section: { type: new GraphQLNonNull(GraphQLString) },
+        semester: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (_, { courseCode, courseName, section, semester }, context) => {
+        if (!context.user) {
+          throw new Error("Authentication required.");
+        }
+        if (!context.user.isAdmin) {
+          throw new Error("Unauthorized: Only admins can create courses.");
+        }
+    
+        // Check if the course already exists
+        const existingCourse = await Course.findOne({ courseCode, section, semester });
+        if (existingCourse) {
+          throw new Error("Course with this code, section, and semester already exists.");
+        }
+    
+        // Create a new course
+        const newCourse = new Course({
+          courseCode,
+          courseName,
+          section,
+          semester,
+          students: [], 
+        });
+    
+        // Save to database
+        await newCourse.save();
+    
+        return newCourse;
+      },
+    },
+    
+    deleteCourse: {
+      type: CourseType,
+      args: {
+        courseId: { type: new GraphQLNonNull(GraphQLID) }, // Use ID for deletion
+      },
+      resolve: async (_, { courseId }, context) => {
+        // Check if user is authenticated
+        if (!context.user) {
+          throw new Error("Authentication required.");
+        }
+    
+        // Check if user is an admin
+        if (!context.user.isAdmin) {
+          throw new Error("Unauthorized: Only admins can delete courses.");
+        }
+    
+        // Find and delete the course by ID
+        const course = await Course.findByIdAndDelete(courseId);
+    
+        if (!course) {
+          throw new Error("Course not found.");
+        }
+    
+        return course;
+      },
+    },
+    
+
     // Update a student's details
     updateStudent: {
       type: StudentType,
@@ -270,7 +344,10 @@ const Mutation = new GraphQLObjectType({
     deleteStudent: {
       type: StudentType,
       args: { studentNumber: { type: new GraphQLNonNull(GraphQLString) } },
-      resolve: async (_, { studentNumber }) => {
+      resolve: async (_, { studentNumber },context) => {
+        if (!(context.user.isAdmin)) {
+          throw new Error("Unauthorized: ONLY ADMIN can delete account.");
+        }
         const student = await Student.findOneAndDelete({ studentNumber });
         if (!student) throw new Error("Student not found");
         return student;
@@ -283,10 +360,18 @@ const Mutation = new GraphQLObjectType({
         studentNumber: { type: new GraphQLNonNull(GraphQLString) },
         courseId: { type: new GraphQLNonNull(GraphQLID) },
       },
-      resolve: async (_, { studentNumber, courseId }) => {
+      resolve: async (_, { studentNumber, courseId },context) => {
+        //check TOken
+        if (!context.user) {
+          throw new Error("Authentication required");
+        }
         const student = await Student.findOne({ studentNumber });
         const course = await Course.findById(courseId);
         if (!student || !course) throw new Error("Student or Course not found");
+        //Not authorized ONLY ADMIN OR STUDENT CAN REGISTER COURSE FOR THEMSELVE NOT FOR OTHERS
+        if (!(context.user._id === student._id.toString() || context.user.isAdmin)) {
+          throw new Error("Unauthorized: You can only register yourself unless you are an admin.");
+        }
         if (course.students.includes(student._id)) {
           throw new Error("Student is already registered in this course");
         }
@@ -302,8 +387,11 @@ const Mutation = new GraphQLObjectType({
         studentNumber: { type: new GraphQLNonNull(GraphQLString) },
         courseId: { type: new GraphQLNonNull(GraphQLID) },
       },
-      resolve: async (_, { studentNumber, courseId }) => {
+      resolve: async (_, { studentNumber, courseId },context) => {
         const student = await Student.findOne({ studentNumber });
+        if (!(context.user._id === student._id.toString() || context.user.isAdmin)) {
+          throw new Error("Unauthorized: You can only register yourself unless you are an admin.");
+        }
         const course = await Course.findById(courseId);
         if (!student || !course) throw new Error("Student or Course not found");
         course.students = course.students.filter(
@@ -319,14 +407,34 @@ const Mutation = new GraphQLObjectType({
       args: {
         studentNumber: { type: new GraphQLNonNull(GraphQLString) },
         oldCourseId: { type: new GraphQLNonNull(GraphQLID) },
-        newCourseId: { type: new GraphQLNonNull(GraphQLID) },
+        newSection: { type: new GraphQLNonNull(GraphQLString) },
       },
-      resolve: async (_, { studentNumber, oldCourseId, newCourseId }) => {
+      resolve: async (_, { studentNumber, oldCourseId, newSection }, context) => {
+        if (!context.user) {
+          throw new Error("Authentication required");
+        }
         const student = await Student.findOne({ studentNumber });
+        if (!student) {
+          throw new Error("Student not found");
+        }
+        if (context.user._id !== student._id.toString() && !context.user.isAdmin) {
+          throw new Error("Unauthorized: You can only change your own section unless you are an admin.");
+        }
         const oldCourse = await Course.findById(oldCourseId);
-        const newCourse = await Course.findById(newCourseId);
-        if (!student || !oldCourse || !newCourse)
-          throw new Error("Student or Course not found");
+        if (!oldCourse)
+          throw new Error("Current Course not found");
+        const newCourse = await Course.findOne({
+          courseCode: oldCourse.courseCode,
+          semester: oldCourse.semester,
+          section: newSection,
+        });
+    
+        if (!newCourse) {
+          throw new Error("New section not found for this course and semester.");
+        }
+        if (newCourse.students.includes(student._id)) {
+          throw new Error("Student is already registered in the new section.");
+        }
         oldCourse.students = oldCourse.students.filter(
           (s) => s.toString() !== student._id.toString()
         );

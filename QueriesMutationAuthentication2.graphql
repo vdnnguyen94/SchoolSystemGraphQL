@@ -1,0 +1,50 @@
+query {
+  coursesByStudent(studentNumber: "101") {
+    courseCode
+    courseName
+    section
+    semester
+    id
+    students {
+      studentNumber
+      firstName
+      lastName
+    }
+  }
+}
+query {
+  unregisteredCourses(studentNumber: "101") {
+    courseCode
+    courseName
+    section
+    semester
+    
+  }
+}
+mutation{
+  logIn(studentNumber: "10001", password: "qwe123")
+}
+mutation{
+  logIn(studentNumber: "101", password: "qwe123")
+}
+mutation{
+  logOut
+}
+mutation {
+  createCourse(courseCode: "COMP555", courseName: "Final Project", section: "401", semester: "Winter 2025") {
+    id
+    courseCode
+    courseName
+    section
+    semester
+  }
+}
+mutation{
+  deleteCourse(courseId: "") {
+    id
+    courseCode
+    courseName
+    section
+    semester
+  }
+}
