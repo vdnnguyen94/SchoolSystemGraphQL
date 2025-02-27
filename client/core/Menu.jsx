@@ -107,7 +107,7 @@ export default function Menu() {
             {/* Admin-Only Section */}
             {isAdmin && (
               <>
-                <Typography variant="h8"  style={{ marginLeft: '20px', color: 'red' }}>
+                <Typography variant="body1"  style={{ marginLeft: '20px', color: 'red'  , display: 'inline-block'}}>
                   ADMIN
                 </Typography>
                 <Link to="/admin/create-student">

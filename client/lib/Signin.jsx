@@ -26,6 +26,14 @@ const IS_LOGGED_IN = gql`
     }
   }
 `;
+
+const IS_ADMIN = gql`
+  query {
+    isAdmin
+  }
+`;
+
+
 const useStyles = makeStyles(theme => ({
   card: {
     maxWidth: 600,
@@ -79,13 +87,15 @@ export default function Signin(props) {
       redirectToReferrer: false
   })
   //Mutation
-  const { refetch } = useQuery(IS_LOGGED_IN);
+  const { refetch: refetchAuth  } = useQuery(IS_LOGGED_IN);
+  const { refetch: refetchAdmin } = useQuery(IS_ADMIN);
   const [logIn, { loading, error }] = useMutation(LOGIN_MUTATION, {
-    refetchQueries: [{ query: IS_LOGGED_IN }],
+    refetchQueries: [{ query: IS_LOGGED_IN }, { query: IS_ADMIN }],
     onCompleted: async (data) => {
       console.log("Login successful:", data);
       if (data.logIn) {
-        await refetch();
+        await await refetchAuth(); 
+        await refetchAdmin();
         setValues({ ...values, redirectToReferrer: true });
       } else {
         setValues({ ...values, error: "Invalid credentials" });
