@@ -3,7 +3,8 @@ import { Card, CardContent, Typography, Button } from "@material-ui/core";
 import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { GET_ALL_COURSES } from "./queries";
-
+import { DELETE_COURSE } from "./mutations";
+import { useMutation } from "@apollo/client";
 const useStyles = makeStyles((theme) => ({
   card: {
     width: "70%",
@@ -35,6 +36,17 @@ const AllCourses = () => {
 
   const courses = data.courses || [];
 
+  const [deleteCourse] = useMutation(DELETE_COURSE, {
+    refetchQueries: [{ query: GET_ALL_COURSES }], 
+    onCompleted: () => alert("Course deleted successfully!"),
+    onError: (err) => alert(`Error: ${err.message}`),
+  });
+
+  const handleDelete = (courseId) => {
+    if (window.confirm("Are you sure you want to delete this course?")) {
+      deleteCourse({ variables: { courseId } });
+    }
+  };
   return (
     <div>
       <Card className={classes.card}>
@@ -64,6 +76,14 @@ const AllCourses = () => {
                   to={`/course/${course.id}`}
                 >
                   View Course Details
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  className={classes.button}
+                  onClick={() => handleDelete(course.id)}
+                >
+                  Delete Course
                 </Button>
               </Card>
             ))
