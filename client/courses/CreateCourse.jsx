@@ -101,7 +101,10 @@ const CreateCourse = () => {
 
     createCourseMutation({
       variables: {
-        input: course,
+        courseCode: course.courseCode,
+        courseName: course.courseName,
+        section: course.section,
+        semester: course.semester,
       },
       context: {
         headers: {
